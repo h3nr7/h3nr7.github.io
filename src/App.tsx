@@ -13,7 +13,6 @@ function App() {
   return (
     <AppContainer>
       <HashRouter>
-        <Link to='alpha'>afaf</Link>
         <Head />
         <Routes>
           <Route path="alpha" element={<Alpha />} />
