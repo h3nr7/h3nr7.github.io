@@ -28,7 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "echo 'your_cutom_domain.online' > ./build/CNAME && gh-pages -d build"
+    "deploy": "echo 'playground.h3nr7.com' > ./build/CNAME && gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
