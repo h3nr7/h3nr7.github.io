@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Routes, Route, HashRouter } from 'react-router-dom';
+import { Routes, Route, HashRouter, Link } from 'react-router-dom';
 import { Gamma } from './pages/Gamma';
 import { Alpha } from './pages/Alpha/Alpha';
 import { Beta } from './pages/Beta';
@@ -13,6 +13,7 @@ function App() {
   return (
     <AppContainer>
       <HashRouter>
+        <Link to='alpha'>afaf</Link>
         <Head />
         <Routes>
           <Route path="alpha" element={<Alpha />} />
