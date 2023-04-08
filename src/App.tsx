@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route, HashRouter } from 'react-router-dom';
 import { Gamma } from './pages/Gamma';
 import { Alpha } from './pages/Alpha/Alpha';
 import { Beta } from './pages/Beta';
@@ -12,7 +12,7 @@ import { Foot } from './ui/Foot';
 function App() {
   return (
     <AppContainer>
-      <BrowserRouter>
+      <HashRouter>
         <Head />
         <Routes>
           <Route path="alpha" element={<Alpha />} />
@@ -20,7 +20,7 @@ function App() {
           <Route path='gamma' element={<Gamma />} />
         </Routes>
         {/* <Foot /> */}
-      </BrowserRouter>
+      </HashRouter>
     </AppContainer>
   );
 }
