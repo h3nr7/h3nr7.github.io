@@ -12,15 +12,15 @@ import { Foot } from './ui/Foot';
 function App() {
   return (
     <AppContainer>
-      <Head />
       <BrowserRouter>
+        <Head />
         <Routes>
           <Route path="alpha" element={<Alpha />} />
           <Route path="beta" element={<Beta />} />
           <Route path='gamma' element={<Gamma />} />
         </Routes>
+        {/* <Foot /> */}
       </BrowserRouter>
-      {/* <Foot /> */}
     </AppContainer>
   );
 }
