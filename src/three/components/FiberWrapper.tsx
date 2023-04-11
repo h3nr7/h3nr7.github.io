@@ -9,7 +9,8 @@ export function FiberWrapper({
 
     return(
         <Container>
-            <Canvas>
+            <Canvas 
+                shadows={true}>
                 {children}
             </Canvas>
         </Container>
