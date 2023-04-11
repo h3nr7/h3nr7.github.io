@@ -9,12 +9,16 @@ export const vert = glsl`
   uniform float seaHeight;
   uniform float seaSpeed;
   uniform vec2 seaFrequency;
-  uniform float seaNoiseDamper;
+  uniform float seaNoiseFactor;
+  uniform float seaWaveAmplitude;
   uniform float uTime;
   varying float vElevation;
+  varying vec2 vUv;
+  uniform sampler2D colorMap;
 
   ${perlin3d}
-  
+
+
   void main() {
 
     // vec4 modelPosition = modelMatrix * vec4(position, 1.0);
@@ -23,7 +27,7 @@ export const vert = glsl`
     //                   sin(modelPosition.y * seaFrequency.y + uTime * seaSpeed) *
     //                   seaHeight;
 
-    // elevation += cnoise(vec3(modelPosition.xz, uTime * seaNoiseDamper));
+    // elevation += cnoise(vec3(modelPosition.xz, uTime * seaNoiseFactor));
 
     // modelPosition.y += elevation;
 
@@ -36,20 +40,33 @@ export const vert = glsl`
 
     // vElevation = elevation;
 
+    vUv = uv;
+
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-    
-    float elevation = sin(normal.x * seaFrequency.x + uTime * seaSpeed) *
-                      sin(normal.y * seaFrequency.y + uTime * seaSpeed) *
-                      sin(normal.z + uTime * seaSpeed) *
-                      seaHeight;
+    float colorMapAlpha = texture2D(colorMap, vUv).a;
 
-    elevation += cnoise(vec3(modelPosition.xy + normal.xz, uTime * seaNoiseDamper));
+    // large waves according to normal vector
+    float mainElevations = sin(modelPosition.x * seaFrequency.x + uTime * seaSpeed) *
+                           sin(modelPosition.y * seaFrequency.y + uTime * seaSpeed) *
+                           sin(modelPosition.z + uTime * seaSpeed) *
+                           seaHeight;
 
-    // elevation += uTime * seaNoiseDamper * cnoise(vec3(normal.xyz));
+    // smaller waves according to position
+    // float smallElevations = abs(uTime * cnoise(vec3(
+    //                           0.01 * seaNoiseFactor * length(normal.xz),
+    //                           0.01 * seaNoiseFactor * length(normal.yz),
+    //                           0.01 * seaNoiseFactor * length(normal.xy)
+    //                         )) * 0.15);
 
-    modelPosition.x += elevation;
-    modelPosition.y += elevation;
-    modelPosition.z += elevation;
+    float smallElevations = abs(turbulence(0.1 * seaNoiseFactor * normal * uTime)) * 0.05 * seaWaveAmplitude;
+
+    float elevation = mainElevations + smallElevations;
+
+
+    if(colorMapAlpha == 0.0) {
+      modelPosition -= elevation;
+    }
+
 
     vec4 viewPosition = viewMatrix * modelPosition;
     vec4 projectedPosition = projectionMatrix * viewPosition;

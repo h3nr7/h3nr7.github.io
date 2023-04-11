@@ -4,10 +4,11 @@ import { vert } from './shaders/vert'
 import { frag } from './shaders/frag'
 import { Vector2 } from "three"
 import { useFrame } from "@react-three/fiber"
+import { useTextureLoader } from "../../../three/loaders/useTextureLoader"
 
 interface Sea {
   noiseLevel?: number
-  noiseDamper?: number
+  noiseFactor?: number
   height?: number
   frequency?: {x: number, y: number}
   speed?: number
@@ -15,20 +16,23 @@ interface Sea {
   crestColor?: THREE.HexColorString
   waveColorOffset?: number
   waveFactor?: number
+  waveAmplitude?: number
 }
 
 export function Sea({
   noiseLevel = 1,
-  noiseDamper = 0.1,
+  noiseFactor = 0.1,
   height = 0.1,
   frequency = {x: 2, y: 2},
   speed = 1,
   troughColor = '#061b5c',
   crestColor = '#81d4de',
   waveColorOffset = 0,
-  waveFactor = 1
+  waveFactor = 1,
+  waveAmplitude = 1
 }:Sea) {
 
+  const [bgTex, bgProgress, bgErr] = useTextureLoader('/bg.png')
 
   useFrame(state => {
     if(!material) return;
@@ -36,17 +40,19 @@ export function Sea({
   })
 
   const material = useMemo(() => {
-    if(noiseLevel) {
+    if(noiseLevel && bgTex) {
       const m = new THREE.ShaderMaterial({
         uniforms: {
+          colorMap: { value: bgTex },
           seaHeight: { value: height },
+          seaWaveAmplitude: { value: waveAmplitude },
           seaFrequency: { value: new Vector2(frequency.x, frequency.y) },
           seaTroughColor: { value: new THREE.Color(troughColor) },
           seaCrestColor: { value: new THREE.Color(crestColor) },
           seaSpeed: { value: crestColor },
           seaWaveColorOffset: { value: waveColorOffset },
           seaWaveFactor: { value: waveFactor },
-          seaNoiseDamper: { value: noiseDamper },
+          seaNoiseFactor: { value: noiseFactor },
           uTime: { value: 0.0 }
         },
         vertexShader: vert,
@@ -56,7 +62,7 @@ export function Sea({
 
       return m
     }
-  }, [noiseLevel])
+  }, [noiseLevel, bgTex])
 
   useEffect(() => {
     if(!material) return;
@@ -68,11 +74,13 @@ export function Sea({
     material.uniforms.seaCrestColor.value = new THREE.Color(crestColor)
     material.uniforms.seaWaveColorOffset.value = waveColorOffset
     material.uniforms.seaWaveFactor.value = waveFactor
-    material.uniforms.seaNoiseDamper.value = noiseDamper
+    material.uniforms.seaNoiseFactor.value = noiseFactor
+    material.uniforms.seaWaveAmplitude.value = waveAmplitude
   }, [
     height, frequency.x, frequency.y, 
     speed, troughColor, crestColor,
-    waveColorOffset, waveFactor, noiseDamper
+    waveColorOffset, waveFactor, waveAmplitude, 
+    noiseFactor, bgTex
   ])
 
   return (

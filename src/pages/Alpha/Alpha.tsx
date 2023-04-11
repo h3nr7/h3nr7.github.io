@@ -24,7 +24,8 @@ import { Sea } from './Sea/Sea'
             seaCrestColor,
             seaWaveColorOffset,
             seaWaveFactor,
-            seaNoiseDamper
+            seaNoiseFactor,
+            seaWaveAmplitude
         } = useControls({
             island: folder({
                 islandColorRatio: {
@@ -35,7 +36,7 @@ import { Sea } from './Sea/Sea'
                 },
                 islandScale: {
                     label: "scale",
-                    value: 0.2,
+                    value: 0.28,
                     min: 0.1,
                     max: 1
                 }
@@ -69,7 +70,7 @@ import { Sea } from './Sea/Sea'
                 },
                 seaWaveColorOffset: {
                     label: "color offset",
-                    value: 1,
+                    value: 1.9,
                     min: -2,
                     max: 10
                 },
@@ -79,11 +80,17 @@ import { Sea } from './Sea/Sea'
                     min: 1,
                     max: 50
                 },
-                seaNoiseDamper: {
-                    label: "noise damper",
-                    value: 0.1,
-                    min: 0.01,
-                    max: 1
+                seaWaveAmplitude: {
+                    label: "noise amplitude",
+                    value: 0.7,
+                    min: 0.1,
+                    max: 10
+                },
+                seaNoiseFactor: {
+                    label: "noise factor",
+                    value: 0.6,
+                    min: 0.1,
+                    max: 10
                 }
             })
         })
@@ -125,7 +132,8 @@ import { Sea } from './Sea/Sea'
                 crestColor={seaCrestColor as THREE.HexColorString}
                 waveColorOffset={seaWaveColorOffset}
                 waveFactor={seaWaveFactor}
-                noiseDamper={seaNoiseDamper}
+                waveAmplitude={seaWaveAmplitude}
+                noiseFactor={seaNoiseFactor}
                 />
             <Island 
                 islandScale={islandScale}

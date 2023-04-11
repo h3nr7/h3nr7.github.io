@@ -24,10 +24,15 @@ export const frag = glsl`
   uniform sampler2D displacementMap;
 
   void main() {
+
     vec4 colorTex = texture2D(colorMap, vUv);
     vec4 disTex = texture2D(displacementMap, vUv);
 
     vec4 tex = colorTex * fragColorRatio + disTex * (1.0 - fragColorRatio);
-    gl_FragColor = vec4(tex.rgb, texture2D(colorMap, vUv).a);
+    
+    float colorMapAlpha = texture2D(colorMap, vUv).a;
+
+    gl_FragColor = vec4(tex.rgb, colorMapAlpha);
+
   }
 `

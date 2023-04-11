@@ -70,7 +70,7 @@ export function Island({
 
             }}
         /> */}
-        <sphereGeometry args={[5, 512, 512]}/>
+        <sphereGeometry args={[5.01, 512, 512]}/>
         {/* <planeGeometry args={[5, 5, 500, 500]} /> */}
     </mesh>
   )
