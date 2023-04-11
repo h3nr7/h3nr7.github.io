@@ -50,28 +50,7 @@ export function Island({
         material={material}
         receiveShadow={true} 
         castShadow={true}>
-        {/* <meshLambertMaterial 
-            side={FrontSide}
-            transparent={true}
-            map={bgTex}
-            displacementScale={0.1}
-            displacementMap={disTex}
-        /> */}
-        {/* <colorShiftMaterial 
-            alphaMap={bgTex}
-            displacementMap={disTex} /> */}
-        {/* <shaderMaterial 
-            vertexShader={vert}
-            fragmentShader={frag}
-            uniforms={{
-                displacementMap: { value: disTex },
-                color1: { value: new Color('blue') },
-                color2: { value: new Color('green') }
-
-            }}
-        /> */}
         <sphereGeometry args={[5.01, 512, 512]}/>
-        {/* <planeGeometry args={[5, 5, 500, 500]} /> */}
     </mesh>
   )
 }

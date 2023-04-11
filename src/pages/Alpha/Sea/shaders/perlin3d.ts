@@ -1,6 +1,8 @@
 import { glsl } from "typed-glsl";
 
-
+/**
+ * this is copied from Stefan Gustavson
+ */
 export const perlin3d = glsl`
     //
     // GLSL textureless classic 3D noise "cnoise",
