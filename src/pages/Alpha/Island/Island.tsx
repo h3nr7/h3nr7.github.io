@@ -4,7 +4,7 @@ import { useTextureLoader } from "../../../three/loaders/useTextureLoader"
 import { frag } from "./shaders/frag"
 import { vert } from "./shaders/vert"
 
-interface Island {
+interface IIsland {
   islandColorRatio: number
   islandScale: number
 }
@@ -12,7 +12,7 @@ interface Island {
 export function Island({
   islandColorRatio,
   islandScale
-}: Island) {
+}: IIsland) {
 
   const [bgTex, bgProgress, bgErr] = useTextureLoader('/bg.png')
   const [disTex, disProgress, disErr] = useTextureLoader('/displacement_map.jpg')

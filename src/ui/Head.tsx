@@ -26,7 +26,8 @@ const H5 = styled.h5`
     padding: 0;
     font-family: "rift-soft";
     text-transform: uppercase;
-    font-weight: 300;
+    font-style: italic;
+    font-weight: 400;
     font-size: 1.5rem;
 `
 
