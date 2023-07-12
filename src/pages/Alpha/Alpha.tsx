@@ -126,7 +126,7 @@ export function Alpha() {
                 />
             <Island 
                 islandScale={islandScale}
-                islandColorRatio={islandColorRatio} /> */}
+                islandColorRatio={islandColorRatio} />
             <Title text='Marllorca 1.0'></Title>
             <CanvasControl />
             <OrbitControls />
