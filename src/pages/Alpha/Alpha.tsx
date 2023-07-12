@@ -5,6 +5,7 @@ import { CanvasControl } from '../../three/components/CanvasControl'
 import { Island } from './Island/Island'
 import { useControls, folder } from 'leva'
 import { Sea } from './Sea/Sea'
+import { Title } from '../../elements/Title'
     
     
 export function Alpha() {
@@ -113,7 +114,7 @@ export function Alpha() {
                 <sphereGeometry args={[4.999, 512, 512]}/>
                 <meshLambertMaterial color={'#0066cc'} />
             </mesh> */}
-            <Sea 
+            {/* <Sea 
                 height={seaHeight}
                 frequency={seaFrequency}
                 speed={seaSpeed}
@@ -126,7 +127,8 @@ export function Alpha() {
                 />
             <Island 
                 islandScale={islandScale}
-                islandColorRatio={islandColorRatio} />
+                islandColorRatio={islandColorRatio} /> */}
+            <Title text='Marllorca 1.0'></Title>
             <CanvasControl />
             <OrbitControls />
         </FiberWrapper>
