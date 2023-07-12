@@ -1,13 +1,23 @@
 import { PerspectiveCamera, OrbitControls, Environment, Sky, Shadow, shaderMaterial } from '@react-three/drei'
 import { FiberWrapper } from '../../three/components/FiberWrapper'
 import { CanvasControl } from '../../three/components/CanvasControl'
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+// import './materials/ColorShiftMaterial';
+=======
+>>>>>>> c606849 (working version)
+>>>>>>> 8310af26c6f8da00d888db71f4ea5082499810ec
 import { Island } from './Island/Island'
 import { useControls, folder } from 'leva'
 import { Sea } from './Sea/Sea'
 import { Title } from '../../elements/Title'
+<<<<<<< HEAD
 import { Suspense, useRef } from 'react'
 import { Camera } from 'three'
 import { Banner } from './Banner/Banner'
+=======
+>>>>>>> 8310af26c6f8da00d888db71f4ea5082499810ec
     
     
 export function Alpha() {
@@ -113,6 +123,7 @@ export function Alpha() {
                 position={[100, -30, -10]}
                 castShadow={true} />
             {/* <directionalLightHelper /> */}
+<<<<<<< HEAD
             <Suspense fallback={<>loading</>}>
                 <Sky />
                 <Environment 
@@ -137,6 +148,30 @@ export function Alpha() {
                     islandColorRatio={islandColorRatio} />
             </Suspense>
             <Banner tiltFactor={bannerTiltFactor}/>
+=======
+            <Sky />
+            <Environment 
+                background={false}
+                preset='sunset'/>
+            <PerspectiveCamera 
+                makeDefault
+                position={[20, 10, 10]} />
+            <Sea 
+                height={seaHeight}
+                frequency={seaFrequency}
+                speed={seaSpeed}
+                troughColor={seaTroughColor as THREE.HexColorString}
+                crestColor={seaCrestColor as THREE.HexColorString}
+                waveColorOffset={seaWaveColorOffset}
+                waveFactor={seaWaveFactor}
+                waveAmplitude={seaWaveAmplitude}
+                noiseFactor={seaNoiseFactor}
+                />
+            <Island 
+                islandScale={islandScale}
+                islandColorRatio={islandColorRatio} />
+            <Title text='Marllorca 1.0'></Title>
+>>>>>>> 8310af26c6f8da00d888db71f4ea5082499810ec
             <CanvasControl />
             <OrbitControls />
         </FiberWrapper>
