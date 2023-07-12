@@ -1,7 +1,7 @@
 import { PerspectiveCamera, OrbitControls, Environment, Sky, Shadow, shaderMaterial } from '@react-three/drei'
 import { FiberWrapper } from '../../three/components/FiberWrapper'
 import { CanvasControl } from '../../three/components/CanvasControl'
-import './materials/ColorShiftMaterial';
+// import './materials/ColorShiftMaterial';
 import { Island } from './Island/Island'
 import { useControls, folder } from 'leva'
 import { Sea } from './Sea/Sea'
