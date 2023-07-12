@@ -1,14 +1,13 @@
 import { PerspectiveCamera, OrbitControls, Environment, Sky, Shadow, shaderMaterial } from '@react-three/drei'
 import { FiberWrapper } from '../../three/components/FiberWrapper'
 import { CanvasControl } from '../../three/components/CanvasControl'
-<<<<<<< HEAD
-// import './materials/ColorShiftMaterial';
-=======
->>>>>>> c606849 (working version)
 import { Island } from './Island/Island'
 import { useControls, folder } from 'leva'
 import { Sea } from './Sea/Sea'
 import { Title } from '../../elements/Title'
+import { Suspense, useRef } from 'react'
+import { Camera } from 'three'
+import { Banner } from './Banner/Banner'
     
     
 export function Alpha() {
@@ -23,7 +22,8 @@ export function Alpha() {
         seaWaveColorOffset,
         seaWaveFactor,
         seaNoiseFactor,
-        seaWaveAmplitude
+        seaWaveAmplitude,
+        bannerTiltFactor
     } = useControls({
         island: folder({
             islandColorRatio: {
@@ -90,44 +90,53 @@ export function Alpha() {
                 min: 0.1,
                 max: 10
             }
+        }),
+        banner: folder({
+            bannerTiltFactor: {
+                label: "tilt factor",
+                value: 0.025,
+                min: 0.01,
+                max: 1
+            }
         })
     })
 
     // usePotreeLoader('https://assets.h3nr7.com/downsampled_test_23-03-2023.las_converted')    
       
-
     return (
         <FiberWrapper>
             {/* <color attach='background' args={['#eeeeee']} /> */}
             <ambientLight intensity={0.35}/>
             <directionalLight 
-                intensity={1.2}
+                intensity={2}
                 color={'#ffcc33'}
                 position={[100, -30, -10]}
                 castShadow={true} />
             {/* <directionalLightHelper /> */}
-            <Sky />
-            <Environment 
-                background={false}
-                preset='sunset'/>
-            <PerspectiveCamera 
-                makeDefault
-                position={[20, 10, 10]} />
-            <Sea 
-                height={seaHeight}
-                frequency={seaFrequency}
-                speed={seaSpeed}
-                troughColor={seaTroughColor as THREE.HexColorString}
-                crestColor={seaCrestColor as THREE.HexColorString}
-                waveColorOffset={seaWaveColorOffset}
-                waveFactor={seaWaveFactor}
-                waveAmplitude={seaWaveAmplitude}
-                noiseFactor={seaNoiseFactor}
-                />
-            <Island 
-                islandScale={islandScale}
-                islandColorRatio={islandColorRatio} />
-            <Title text='Marllorca 1.0'></Title>
+            <Suspense fallback={<>loading</>}>
+                <Sky />
+                <Environment 
+                    background={false}
+                    preset='sunset'/>
+                <PerspectiveCamera 
+                    makeDefault
+                    position={[20, 10, 10]} />
+                <Sea 
+                    height={seaHeight}
+                    frequency={seaFrequency}
+                    speed={seaSpeed}
+                    troughColor={seaTroughColor as THREE.HexColorString}
+                    crestColor={seaCrestColor as THREE.HexColorString}
+                    waveColorOffset={seaWaveColorOffset}
+                    waveFactor={seaWaveFactor}
+                    waveAmplitude={seaWaveAmplitude}
+                    noiseFactor={seaNoiseFactor}
+                    />
+                <Island 
+                    islandScale={islandScale}
+                    islandColorRatio={islandColorRatio} />
+            </Suspense>
+            <Banner tiltFactor={bannerTiltFactor}/>
             <CanvasControl />
             <OrbitControls />
         </FiberWrapper>
