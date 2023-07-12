@@ -1,4 +1,4 @@
-import { FontData, Text3D } from "@react-three/drei";
+import { Center, FontData, Text3D } from "@react-three/drei";
 import { PropsWithChildren, Ref, forwardRef, useImperativeHandle, useRef } from "react";
 import { Group, Mesh, Quaternion, Vector3 } from "three";
 
@@ -40,11 +40,10 @@ export const Title = forwardRef<ITitleHandler, ITitle>(({
     }))
         
     return (
-        <group 
-            position={new Vector3(0, 7, 0)}
-        >
+        <group ref={groupRef}>
         <Text3D 
             ref={textRef}
+            position={new Vector3(0, 7, 0)}
             curveSegments={curveSegments}
             bevelEnabled={bevelEnabled}
             font={fonts || DEFAULT_FONT_URL}
