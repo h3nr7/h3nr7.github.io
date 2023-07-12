@@ -1,7 +1,10 @@
 import { PerspectiveCamera, OrbitControls, Environment, Sky, Shadow, shaderMaterial } from '@react-three/drei'
 import { FiberWrapper } from '../../three/components/FiberWrapper'
 import { CanvasControl } from '../../three/components/CanvasControl'
+<<<<<<< HEAD
 // import './materials/ColorShiftMaterial';
+=======
+>>>>>>> c606849 (working version)
 import { Island } from './Island/Island'
 import { useControls, folder } from 'leva'
 import { Sea } from './Sea/Sea'
@@ -57,7 +60,7 @@ export function Alpha() {
             },
             seaTroughColor: {
                 label: "wave trough",
-                value: '#061b5c'
+                value: '#8997c3'
             },
             seaCrestColor: {
                 label: "wave crest",
@@ -110,11 +113,7 @@ export function Alpha() {
             <PerspectiveCamera 
                 makeDefault
                 position={[20, 10, 10]} />
-            {/* <mesh>
-                <sphereGeometry args={[4.999, 512, 512]}/>
-                <meshLambertMaterial color={'#0066cc'} />
-            </mesh> */}
-            {/* <Sea 
+            <Sea 
                 height={seaHeight}
                 frequency={seaFrequency}
                 speed={seaSpeed}

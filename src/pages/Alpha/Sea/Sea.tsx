@@ -25,7 +25,7 @@ export function Sea({
   height = 0.1,
   frequency = {x: 2, y: 2},
   speed = 1,
-  troughColor = '#061b5c',
+  troughColor = '#8997c3',
   crestColor = '#81d4de',
   waveColorOffset = 0,
   waveFactor = 1,

@@ -182,19 +182,4 @@ export const perlin3d = glsl`
     return 2.2 * n_xyz;
     }
 
-
-  float turbulence( vec3 p ) {
-
-    float w = 100.0;
-    float t = -.5;
-  
-    for (float f = 1.0 ; f <= 10.0 ; f++ ){
-      float power = pow( 2.0, f );
-      t += abs( pnoise( vec3( power * p ), vec3( 10.0, 10.0, 10.0 ) ) / power );
-    }
-  
-    return t;
-  
-  }
-
 `
