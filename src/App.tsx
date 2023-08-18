@@ -4,7 +4,7 @@ import './App.css';
 import { Routes, Route, HashRouter, Link } from 'react-router-dom';
 import { Gamma } from './pages/Gamma';
 import { Alpha } from './pages/Alpha/Alpha';
-import { Beta } from './pages/Beta';
+import { Beta } from './pages/Beta/Beta';
 import { AppContainer } from './App.styles';
 import { Head } from './ui/Head';
 import { Foot } from './ui/Foot';

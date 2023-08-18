@@ -38,6 +38,7 @@ export function Banner({
 
     return (
         <animated.mesh
+            visible={loaded}
             scale={scale} >    
             <Title
                 ref={ref}

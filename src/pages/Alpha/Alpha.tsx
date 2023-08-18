@@ -137,7 +137,9 @@ export function Alpha() {
                     islandScale={islandScale}
                     islandColorRatio={islandColorRatio} />
             </Suspense>
-            <Banner tiltFactor={bannerTiltFactor}/>
+            <Suspense>
+                <Banner tiltFactor={bannerTiltFactor}/>
+            </Suspense>
             <CanvasControl />
             <OrbitControls />
         </FiberWrapper>
