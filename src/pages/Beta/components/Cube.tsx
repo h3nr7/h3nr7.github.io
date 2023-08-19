@@ -4,11 +4,12 @@ import { Mesh } from 'three';
 
 interface CubeProps {
   devMode?:boolean
+  position: [number, number, number]
 }
 
-export function Cube({ devMode }:PropsWithChildren<CubeProps>) {
+export function Cube({ devMode, position }:PropsWithChildren<CubeProps>) {
   
-  const [ref] = useBox(() => ({ mass: 1, position: [0, 5, 10], rotation:[Math.PI/5, Math.PI/7, 0] }), useRef<Mesh>(null))
+  const [ref] = useBox(() => ({ mass: 1, position: position, rotation:[Math.PI/5, Math.PI/7, 0] }), useRef<Mesh>(null))
 
   return (
     <mesh ref={ref} castShadow>
