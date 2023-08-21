@@ -1,13 +1,13 @@
-import { usePlane } from "@react-three/cannon";
 import { folder, useControls } from "leva"
 import { FiberWrapper } from "../../three/components/FiberWrapper"
 import { Physics } from "@react-three/cannon"
-import { Mesh } from "three";
-import { useMemo, useRef } from "react";
+// import { Mesh } from "three";
+import { useMemo } from "react";
 import { Cube } from "./components/Cube";
 import { Ground } from "./components/Ground";
-import { AccumulativeShadows, Environment, OrbitControls, PerspectiveCamera, RandomizedLight, Shadow, Stage } from "@react-three/drei";
+import { AccumulativeShadows, Lightformer, OrbitControls } from "@react-three/drei";
 import { BoundingBox } from "./components/BoundingBox";
+import { Vector3 } from "three";
 
 
 export function Beta() {
@@ -42,6 +42,7 @@ export function Beta() {
     return tot;
   }, [boxes])
 
+  const lookAt = new Vector3(0, 0, 0);
   
 
   return (
@@ -53,16 +54,19 @@ export function Beta() {
         far: 1000
       }}
     >
-      <ambientLight />
-      <pointLight position={[-10, 10, -10]} castShadow />
+      <ambientLight intensity={1}/>
+      <spotLight 
+        castShadow
+        angle={Math.PI/2}
+        lookAt={() => lookAt}
+        position={[0, 100, 0]} 
+        decay={0.01}
+        intensity={1}/>
       <Physics gravity={gravity}>
-        {arr.map(d => <Cube devMode={devMode} position={[0, d, 0]} />)}
+        {arr.map((d, i) => <Cube key={i} devMode={devMode} position={[0, d, 0]} />)}
         <BoundingBox devMode={devMode} />
         <Ground devMode={devMode}/>
       </Physics>
-      <AccumulativeShadows temporal frames={100} scale={10}>
-        <RandomizedLight amount={8} position={[5, 5, -10]} />
-      </AccumulativeShadows>
       <OrbitControls target={[0, 0, 0]}/>
     </FiberWrapper>
   )

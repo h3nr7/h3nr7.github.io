@@ -1,4 +1,4 @@
-import { createShaderProgram, glsl } from "typed-glsl";
+import { glsl } from "typed-glsl";
 
 export const frag = glsl`
 

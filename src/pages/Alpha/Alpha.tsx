@@ -1,15 +1,11 @@
-import { PerspectiveCamera, OrbitControls, Environment, Sky, Shadow, shaderMaterial } from '@react-three/drei'
+import { PerspectiveCamera, OrbitControls, Environment, Sky } from '@react-three/drei'
 import { FiberWrapper } from '../../three/components/FiberWrapper'
 import { CanvasControl } from '../../three/components/CanvasControl'
-// import './materials/ColorShiftMaterial';
 import { Island } from './Island/Island'
 import { useControls, folder } from 'leva'
 import { Sea } from './Sea/Sea'
-import { Title } from '../../elements/Title'
-import { Suspense, useRef } from 'react'
-import { Camera } from 'three'
+import { Suspense } from 'react'
 import { Banner } from './Banner/Banner'
-    
     
 export function Alpha() {
     const {
@@ -126,8 +122,8 @@ export function Alpha() {
                     height={seaHeight}
                     frequency={seaFrequency}
                     speed={seaSpeed}
-                    troughColor={seaTroughColor as THREE.HexColorString}
-                    crestColor={seaCrestColor as THREE.HexColorString}
+                    troughColor={seaTroughColor}
+                    crestColor={seaCrestColor}
                     waveColorOffset={seaWaveColorOffset}
                     waveFactor={seaWaveFactor}
                     waveAmplitude={seaWaveAmplitude}

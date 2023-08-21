@@ -14,7 +14,7 @@ export function Cube({ devMode, position }:PropsWithChildren<CubeProps>) {
   return (
     <mesh ref={ref} castShadow>
       <boxGeometry />
-      <meshPhongMaterial color={'red'}/>
+      <meshLambertMaterial color={'red'}/>
     </mesh>
   )
 }

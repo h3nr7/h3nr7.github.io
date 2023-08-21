@@ -9,12 +9,12 @@ const ALink = styled(Link)`
         text-decoration: underline
     } */
 
-    ::before {
+    &:before {
         content: " . ";
     }
 
-    :first-child {
-        ::before {
+    &:first-child {
+        &:before {
             content: none;
         }
     }
@@ -66,7 +66,7 @@ export function Head() {
         <HeadContainer>
             <H5>
                 <ALink to='/'>h3nr7</ALink>
-                {reducePaths.map(o => <ALink to={o.url}>{o.name}</ALink>)}
+                {reducePaths.map((o, i) => <ALink key={i} to={o.url}>{o.name}</ALink>)}
             </H5>
         </HeadContainer>
     )

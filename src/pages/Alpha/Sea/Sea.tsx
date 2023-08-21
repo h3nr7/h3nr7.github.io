@@ -12,11 +12,11 @@ interface Sea {
   height?: number
   frequency?: {x: number, y: number}
   speed?: number
-  troughColor?: THREE.HexColorString
-  crestColor?: THREE.HexColorString
-  waveColorOffset?: number
+  troughColor?: string
+  crestColor?: string
   waveFactor?: number
   waveAmplitude?: number
+  waveColorOffset?: number
 }
 
 export function Sea({

@@ -1,4 +1,4 @@
-import { createShaderProgram, glsl } from "typed-glsl";
+import { glsl } from "typed-glsl";
 import * as THREE from 'three'
 import { perlin3d } from '../../../../three/shaders/perlin3d'
 

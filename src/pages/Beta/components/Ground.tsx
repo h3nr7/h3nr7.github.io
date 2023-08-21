@@ -12,7 +12,7 @@ export function Ground({ devMode }:PropsWithChildren<GroundProps>) {
   const [ref] = usePlane(() => ({ position:[0, 0, 0.1], rotation:[-Math.PI / 2, 0, 0] }), useRef<Mesh>(null))
 
   return (
-    <group>
+    <group receiveShadow>
       <mesh ref={ref}>
         <planeGeometry args={[200, 200]} />
       </mesh>
