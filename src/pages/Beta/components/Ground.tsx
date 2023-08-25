@@ -5,24 +5,27 @@ import { Mesh } from "three";
 
 interface GroundProps {
   devMode?: boolean
+  hasPhysics?: boolean
 }
 
-export function Ground({ devMode }:PropsWithChildren<GroundProps>) {
+export function Ground({ devMode, hasPhysics }:PropsWithChildren<GroundProps>) {
 
   const [ref] = usePlane(() => ({ position:[0, 0, 0.1], rotation:[-Math.PI / 2, 0, 0] }), useRef<Mesh>(null))
 
   return (
-    <group receiveShadow>
-      <mesh ref={ref}>
-        <planeGeometry args={[200, 200]} />
-      </mesh>
+    <group>
+      {hasPhysics ? (
+        <mesh ref={ref} visible={false}>
+          <planeGeometry args={[200, 200]} />
+        </mesh>
+      ) : null}
       <Grid 
         args={[200, 200]} 
         position={[0, 0, 0.1]} 
-        fadeDistance={300} 
+        fadeDistance={500} 
         sectionColor={'blanchedalmond'}
         cellColor={'grey'}
-        receiveShadow />
+        />
     </group>
   )
 }

@@ -9,7 +9,6 @@ import { AccumulativeShadows, Lightformer, OrbitControls } from "@react-three/dr
 import { BoundingBox } from "./components/BoundingBox";
 import { Vector3 } from "three";
 
-
 export function Beta() {
 
   const { gravity, boxes, devMode } = useControls({
@@ -45,11 +44,12 @@ export function Beta() {
   const lookAt = new Vector3(0, 0, 0);
   
 
+
   return (
     <FiberWrapper 
       camera={{
         fov: 8,
-        position: [100, 100, 100],
+        position: [200, 200, 200],
         near: 10,
         far: 1000
       }}

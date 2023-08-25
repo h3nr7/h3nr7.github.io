@@ -1,6 +1,6 @@
 import './App.css';
 import { Routes, Route, HashRouter } from 'react-router-dom';
-import { Gamma } from './pages/Gamma';
+import { Gamma } from './pages/Gamma/Gamma';
 import { Alpha } from './pages/Alpha/Alpha';
 import { Beta } from './pages/Beta/Beta';
 import { AppContainer } from './App.styles';
