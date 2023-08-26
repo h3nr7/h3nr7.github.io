@@ -7,13 +7,13 @@ import { glsl } from "typed-glsl";
 import { useFrame } from "@react-three/fiber";
 import { vec3 } from 'gl-matrix'
 
-interface BoidsGltfProps {
+interface BoidsGltfAnimProps {
   size?: number
 }
 
-export function BoidsGltf({
+export function BoidsGltfAnim({
   size = 0.1
-}: PropsWithChildren<BoidsGltfProps>) {
+}: PropsWithChildren<BoidsGltfAnimProps>) {
 
   let materialShader:Shader
   const { computationRenderer, positionVariable, velocityVariable } = useBoids()
@@ -21,7 +21,7 @@ export function BoidsGltf({
   
   // const gltf = useGLTF('/Parrot.glb')
   // const gltf = useGLTF('/Flamingo.glb')
-  const gltf = useGLTF('/bird.glb')
+  const gltf = useGLTF('/bird-new.glb')
   // const gltf = useGLTF('/toucan_bird.glb')
 
 

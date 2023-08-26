@@ -3,6 +3,7 @@ import { FiberWrapper } from "../../three/components/FiberWrapper";
 import { Ground } from "./Ground";
 import { Boids, BoidsSimple } from "./Boids";
 import { BoidsGltf } from "./Boids/BoidsGltf";
+import { BoidsGltfAnim } from "./Boids/BoidsGltfAnim";
 
 
 export function Gamma() {
@@ -13,7 +14,7 @@ export function Gamma() {
   return (
     <FiberWrapper 
     camera={{
-      fov: 75,
+      fov: 8,
       position: [200, 200, 350],
       near: 10,
       far: 3000
@@ -30,9 +31,13 @@ export function Gamma() {
         decay={0.01}
         intensity={1}/>
     {/* <Boids /> */}
-    <Boids>
-
-      <BoidsGltf />
+    <Boids 
+      separationDistance={0.1}
+      alignmentDistance={0.1}
+      cohesionDistance={0.1}
+      freedomFactor={0.1}>
+      <BoidsGltfAnim size={0.05}/>
+      {/* <BoidsGltf size={0.05}/> */}
       {/* <BoidsSimple /> */}
     </Boids>
     <Ground/>

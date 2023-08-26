@@ -68,7 +68,7 @@ export const velocityFrag = glsl`
     dist = length( dir );
     distSquared = dist * dist;
 
-    float preyRadius = 150.0;
+    float preyRadius = 50.0;
     float preyRadiusSq = preyRadius * preyRadius;
 
 

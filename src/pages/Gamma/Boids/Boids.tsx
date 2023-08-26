@@ -25,7 +25,14 @@ export const useBoids = () => useContext(BoidsCtx)
  * @param param0 
  * @returns 
  */
-export function Boids({ children }:PropsWithChildren<BoidsProps>) {
+export function Boids({ 
+  separationDistance = 10.0,
+  alignmentDistance = 10.0,
+  cohesionDistance = 10.0,
+  freedomFactor = 0.75,
+  predator = [0, 0, 0],
+  children 
+}:PropsWithChildren<BoidsProps>) {
 
   const { gl } = useThree()
 
@@ -57,11 +64,11 @@ export function Boids({ children }:PropsWithChildren<BoidsProps>) {
     velocityUniform['time'] = { value: 1.0 }
     velocityUniform['delta'] = { value: 0.0 }
     velocityUniform['testing'] = { value: 1.0 }
-    velocityUniform['separationDistance'] = { value: 20.0 }
-    velocityUniform['alignmentDistance'] = { value: 20.0 }
-    velocityUniform['cohesionDistance'] = { value: 20.0 }
-    velocityUniform['freedomFactor'] = { value: 0.75 }
-    velocityUniform['predator'] = { value: new Vector3() }
+    velocityUniform['separationDistance'] = { value: separationDistance }
+    velocityUniform['alignmentDistance'] = { value: alignmentDistance }
+    velocityUniform['cohesionDistance'] = { value: cohesionDistance }
+    velocityUniform['freedomFactor'] = { value: freedomFactor }
+    velocityUniform['predator'] = { value: new Vector3(predator[0], predator[1], predator[2]) }
 
     positionUniform['time'] = { value: 0.0 }
     positionUniform['delta'] = { value: 0.0 }
