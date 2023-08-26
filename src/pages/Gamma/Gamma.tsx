@@ -1,8 +1,8 @@
 import { Vector3 } from "three";
 import { FiberWrapper } from "../../three/components/FiberWrapper";
-import { Boids } from "./Boids";
-import { BoidsBird } from './BoidsBird/BoidsBird'
 import { Ground } from "./Ground";
+import { Boids, BoidsSimple } from "./Boids";
+import { BoidsGltf } from "./Boids/BoidsGltf";
 
 
 export function Gamma() {
@@ -13,12 +13,14 @@ export function Gamma() {
   return (
     <FiberWrapper 
     camera={{
-      fov: 8,
+      fov: 75,
       position: [200, 200, 350],
       near: 10,
       far: 3000
     }}
   >
+    <hemisphereLight position={[0, 50, 0]}/>
+    <directionalLight position={[-30, 57, 30]} />
     <ambientLight intensity={1}/>
     <spotLight 
         castShadow
@@ -28,8 +30,12 @@ export function Gamma() {
         decay={0.01}
         intensity={1}/>
     {/* <Boids /> */}
-    <BoidsBird />
-    <Ground />
+    <Boids>
+
+      <BoidsGltf />
+      {/* <BoidsSimple /> */}
+    </Boids>
+    <Ground/>
 
   </FiberWrapper>
   )

@@ -4,16 +4,20 @@ import { Mesh } from "three";
 
 interface GroundProps {
   devMode?: boolean
+  fadeDistance?: number
 }
 
-export function Ground({ devMode }:PropsWithChildren<GroundProps>) {
+export function Ground({ 
+  devMode,
+  fadeDistance = 500
+}:PropsWithChildren<GroundProps>) {
 
   return (
     <group>
       <Grid 
         args={[200, 200]} 
         position={[0, 0, 0.1]} 
-        fadeDistance={500} 
+        fadeDistance={fadeDistance} 
         sectionColor={'blanchedalmond'}
         cellColor={'grey'}
         />

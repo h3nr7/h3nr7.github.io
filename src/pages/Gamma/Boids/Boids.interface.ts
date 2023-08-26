@@ -1,11 +1,16 @@
-import { Vector3 } from 'three'
+import { IUniform } from "three";
+import { GPUComputationRenderer, Variable } from "three/examples/jsm/misc/GPUComputationRenderer.js";
 
 export interface BoidsProps {
-  devMode?: boolean
-  hasPhysics?: boolean
-  total?: number
+  
 }
 
-export interface BoidProps {
-  position: Vector3 | [number, number, number]
+export type BoidsUniform = { [uniform: string]: IUniform }
+
+export interface IBoidsCtx {
+  computationRenderer?: GPUComputationRenderer
+  velocityVariable?: Variable
+  positionVariable?: Variable
+  velocityUniform?: BoidsUniform
+  positionUniform?: BoidsUniform
 }

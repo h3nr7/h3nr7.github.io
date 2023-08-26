@@ -1,22 +1,28 @@
 import { GPUComputationRenderer } from "three/examples/jsm/misc/GPUComputationRenderer.js";
-import { PropsWithChildren, useMemo } from 'react'
-import { BoidsBirdProps } from "./BoidsBird.interface";
+import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
+import { BoidsBirdProps, BoidsMeshProps, IBoidsCtx } from "./BoidsBird.interface";
 import { BoidsBirdGeometry } from './BoidsBirdGeometry'
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3, Texture, RepeatWrapping } from 'three'
 import { velocityFrag } from "../Boids/shaders/velocityFrag";
 import { positionFrag } from "../Boids/shaders/positionFrag";
+import { BoidsSimple } from "../Boids/BoidsSimple";
 
 const SIZE_LIMIT = 5
 const WIDTH = 64;
 const BOUNDS = 100, BOUNDS_HALF = BOUNDS / 2
 
-export function BoidsBird({}:PropsWithChildren<BoidsBirdProps>) {
+
+const BoidsCtx = createContext<IBoidsCtx>({})
+
+export const useBoids = () => useContext(BoidsCtx)
+
+export function BoidsBird({ children }:PropsWithChildren<BoidsBirdProps>) {
 
   const { gl } = useThree()
 
   const { 
-    gpuCompute, 
+    computationRenderer, 
     velocityVariable,
     positionVariable,
     velocityUniform, 
@@ -65,13 +71,13 @@ export function BoidsBird({}:PropsWithChildren<BoidsBirdProps>) {
       console.error('BoidComputation Error:' + (e as Error)?.message)
     }
   
-    return { gpuCompute: gpu, velocityVariable, positionVariable, velocityUniform, positionUniform }
+    return { computationRenderer: gpu, velocityVariable, positionVariable, velocityUniform, positionUniform }
   }, [])
 
   let last = performance.now()
 
   useFrame(f => {
-    if(!gpuCompute || !velocityUniform || !positionUniform) return
+    if(!computationRenderer || !velocityUniform || !positionUniform) return
     let now = f.clock.oldTime
     let delta = ( now - last ) / 1000;
 
@@ -83,18 +89,33 @@ export function BoidsBird({}:PropsWithChildren<BoidsBirdProps>) {
     positionUniform[ 'time' ].value = now;
     positionUniform[ 'delta' ].value = delta;
 
-    gpuCompute.compute()
+    computationRenderer.compute()
 
   })
 
 
   return (
-    <BoidsBirdGeometry 
-      size={0.2} 
-      computationRenderer={gpuCompute}
-      velocityVariable={velocityVariable}
-      positionVariable={positionVariable}
-    />
+    <BoidsCtx.Provider 
+      value={{ 
+        computationRenderer, 
+        velocityVariable,
+        positionVariable,
+        velocityUniform,
+        positionUniform 
+      }}>
+        {children}
+      {/* // <BoidsBirdGeometry 
+      //   size={0.2} 
+      //   computationRenderer={gpuCompute}
+      //   velocityVariable={velocityVariable}
+      //   positionVariable={positionVariable}
+      // /> */}
+      {/* <BoidsSimple 
+        computationRenderer={computationRenderer}
+        velocityVariable={velocityVariable}
+        positionVariable={positionVariable}/> */}
+    </BoidsCtx.Provider>
+
   )
 }
 

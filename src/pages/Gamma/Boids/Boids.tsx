@@ -1,42 +1,43 @@
-import { PropsWithChildren, useRef, useMemo } from "react";
-import { BoidProps, BoidsProps } from "./Boids.interface";
-import { Instance, Instances } from "@react-three/drei";
-import { ThreeEvent, useThree, useFrame, extend, Object3DNode } from "@react-three/fiber";
-import { 
-  ConeGeometry, 
-  ShaderMaterial, Color, Vector3, DoubleSide,
-  MeshLambertMaterial, Texture, RepeatWrapping } from 'three'
 import { GPUComputationRenderer } from "three/examples/jsm/misc/GPUComputationRenderer.js";
-
+import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
+import { BoidsProps, IBoidsCtx } from "./Boids.interface";
+import { useFrame, useThree } from "@react-three/fiber";
+import { Vector3, Texture, RepeatWrapping } from 'three'
 import { velocityFrag } from "./shaders/velocityFrag";
 import { positionFrag } from "./shaders/positionFrag";
-import { vert } from "./shaders/vert";
-import { frag } from "./shaders/frag";
-import { Boid } from "./Boid";
-import { now } from "three/examples/jsm/libs/tween.module.js";
-import BirdGeometry from "./geometry/BirdGeometry";
+import { fillPositionTexture, fillVelocityTexture } from "./helpers/initialisers";
+import { BOUNDS, WIDTH } from ".";
+
+/**
+ * Boids Context
+ */
+const BoidsCtx = createContext<IBoidsCtx>({})
+
+/**
+ * Boids context hook
+ * @returns 
+ */
+export const useBoids = () => useContext(BoidsCtx)
 
 
-const SIZE_LIMIT = 5
-const BOUNDS = 100, BOUNDS_HALF = BOUNDS / 2
-
-export function Boids({ 
-  devMode, 
-  hasPhysics, 
-  total=100 
-}:PropsWithChildren<BoidsProps>) {
+/**
+ * Boids Wrapper
+ * @param param0 
+ * @returns 
+ */
+export function Boids({ children }:PropsWithChildren<BoidsProps>) {
 
   const { gl } = useThree()
 
-
+  // memoised computation renderer, variables and uniforms
   const { 
-    gpuCompute, 
+    computationRenderer, 
     velocityVariable,
     positionVariable,
     velocityUniform, 
     positionUniform 
   } = useMemo(() => {
-    const gpu = new GPUComputationRenderer(50, 50, gl)
+    const gpu = new GPUComputationRenderer(WIDTH, WIDTH, gl)
 
     const dtVelocity = gpu.createTexture()
     const dtPosition = gpu.createTexture()
@@ -56,12 +57,12 @@ export function Boids({
     velocityUniform['time'] = { value: 1.0 }
     velocityUniform['delta'] = { value: 0.0 }
     velocityUniform['testing'] = { value: 1.0 }
-    velocityUniform['separationDistance'] = { value: 10.0 }
-    velocityUniform['alignmentDistance'] = { value: 10.0 }
-    velocityUniform['cohesionDistance'] = { value: 10.0 }
-    velocityUniform['freedomFactor'] = { value: 0.50 }
+    velocityUniform['separationDistance'] = { value: 20.0 }
+    velocityUniform['alignmentDistance'] = { value: 20.0 }
+    velocityUniform['cohesionDistance'] = { value: 20.0 }
+    velocityUniform['freedomFactor'] = { value: 0.75 }
     velocityUniform['predator'] = { value: new Vector3() }
-  
+
     positionUniform['time'] = { value: 0.0 }
     positionUniform['delta'] = { value: 0.0 }
   
@@ -79,128 +80,41 @@ export function Boids({
       console.error('BoidComputation Error:' + (e as Error)?.message)
     }
   
-    return { gpuCompute: gpu, velocityVariable, positionVariable, velocityUniform, positionUniform }
+    return { computationRenderer: gpu, velocityVariable, positionVariable, velocityUniform, positionUniform }
   }, [])
 
-  const birdUniforms = useMemo(() => {
-
-    return  {
-      color: { value: new Color( 0xff2200 ) },
-      texturePosition: { value: new Texture() },
-      textureVelocity: { value: new Texture() },
-      time: { value: 1.0 },
-      delta: { value: 0.0 }
-    }
-  }, [])
 
   let last = performance.now()
-
+  // use frame for rendered frames
   useFrame(f => {
-
-    if(!gpuCompute || !velocityUniform || !positionUniform) return
+    if(!computationRenderer || !velocityUniform || !positionUniform) return
     let now = f.clock.oldTime
     let delta = ( now - last ) / 1000;
 
     if ( delta > 1 ) delta = 1; // safety cap on large deltas
     last = now;
 
-    velocityUniform['time'].value = now
-    velocityUniform['delta'].value = delta
+    velocityUniform[ 'time' ].value = now;
+    velocityUniform[ 'delta' ].value = delta;
+    positionUniform[ 'time' ].value = now;
+    positionUniform[ 'delta' ].value = delta;
 
-    positionUniform['time'].value = now
-    positionUniform['delta'].value = delta
-
-
-    gpuCompute.compute()
-
-    birdUniforms[ 'texturePosition' ].value = gpuCompute.getCurrentRenderTarget( positionVariable ).texture;
-    birdUniforms[ 'textureVelocity' ].value = gpuCompute.getCurrentRenderTarget( velocityVariable ).texture;
-
+    computationRenderer.compute()
   })
 
-  const material = new ShaderMaterial({
-    uniforms: birdUniforms,
-    vertexShader: vert,
-    fragmentShader: frag,
-    side: DoubleSide
-
-  })
-
-  const geometry = new BirdGeometry()
 
   return (
-    // <Instances 
-    //   material={material} 
-    //   geometry={geometry} 
-    //   scale={0.2} 
-    //   castShadow>
-    //   { generateBoids(total) }
-    // </Instances>
-    <mesh 
-      matrixAutoUpdate={false}
-      geometry={geometry} 
-      material={material} 
-      rotation={[0, Math.PI / 2, 0]} />
+    <BoidsCtx.Provider 
+      value={{ 
+        computationRenderer, 
+        velocityVariable,
+        positionVariable,
+        velocityUniform,
+        positionUniform 
+      }}>
+        {children}
+      </BoidsCtx.Provider>
   )
+
 }
 
-/**
- * generate boids
- * @param tot 
- * @returns 
- */
-function generateBoids(tot: number) {
-
-  const dat = useMemo(() => {
-    const bArray:Array<[number, number, number]> = [];
-    for (let i=0; i<tot; i++) {
-      bArray.push([(2*Math.random() - 1) * SIZE_LIMIT/2, Math.random() * SIZE_LIMIT, (2*Math.random() - 1) * SIZE_LIMIT/2])
-    }
-
-    return bArray;
-  }, [])
-
-  return dat.map((props, i) => <Boid key={i} position={props}/>)
-}
-
-
-/**
- * fill position texture
- * @param texture 
- */
-function fillPositionTexture(texture:Texture) {
-  const theArray = texture.image.data;
-
-  for ( let k = 0, kl = theArray.length; k < kl; k += 4 ) {
-
-    const x = Math.random() * BOUNDS - BOUNDS_HALF;
-    const y = Math.random() * BOUNDS - BOUNDS_HALF;
-    const z = Math.random() * BOUNDS - BOUNDS_HALF;
-
-    theArray[ k + 0 ] = x;
-    theArray[ k + 1 ] = y;
-    theArray[ k + 2 ] = z;
-    theArray[ k + 3 ] = 1;
-  }
-}
-
-/**
- * fill velocity texture
- * @param texture 
- */
-function fillVelocityTexture(texture:Texture) {
-  const theArray = texture.image.data;
-
-  for ( let k = 0, kl = theArray.length; k < kl; k += 4 ) {
-
-    const x = Math.random() - 0.5;
-    const y = Math.random() - 0.5;
-    const z = Math.random() - 0.5;
-
-    theArray[ k + 0 ] = x * 10;
-    theArray[ k + 1 ] = y * 10;
-    theArray[ k + 2 ] = z * 10;
-    theArray[ k + 3 ] = 1;
-
-  }
-}
