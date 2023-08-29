@@ -9,6 +9,13 @@ export interface BoidsProps {
   predator?: [number, number, number]
 }
 
+export interface BoidsGltfProps {
+  size?: number
+  pause?:boolean
+  rotation?: [number, number, number]
+  url: string
+}
+
 export type BoidsUniform = { [uniform: string]: IUniform }
 
 export interface IBoidsCtx {

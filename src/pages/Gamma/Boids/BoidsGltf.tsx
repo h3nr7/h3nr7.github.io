@@ -1,9 +1,7 @@
 import { 
   BufferAttribute, BufferGeometry, DataTexture, 
   FloatType, Shader, Mesh, 
-  MeshStandardMaterial, RGBAFormat, Texture,
-  ShaderLib, 
-  UVMapping
+  MeshStandardMaterial, RGBAFormat,
 } from "three";
 import { useBoids } from "./Boids";
 import { useGLTF } from "@react-three/drei";
@@ -12,17 +10,15 @@ import { BIRDS, WIDTH } from ".";
 import { glsl } from "typed-glsl";
 import { vec3 } from 'gl-matrix'
 import { useFrame } from "@react-three/fiber";
+import { blpo2 } from "./helpers/math";
+import { BoidsGltfProps } from "./Boids.interface";
 
-interface BoidsGltfProps {
-  size?: number
-  pause?:boolean
-  rotation?: [number, number, number]
-}
 
 export function BoidsGltf({
   size = 0.2,
   pause = false,
-  rotation = [0, Math.PI/2, 0]
+  rotation = [0, Math.PI/2, 0],
+  url
 }: PropsWithChildren<BoidsGltfProps>) {
 
   const [pauseAnim, setPauseAnim] = useState(pause)
@@ -31,14 +27,7 @@ export function BoidsGltf({
   let materialShader:Shader
   const { computationRenderer, positionVariable, velocityVariable } = useBoids()
   const geometry = new BufferGeometry()
-  
-  // const gltf = useGLTF('/Parrot.glb')
-  const gltf = useGLTF('/Flamingo.glb')
-  // const gltf = useGLTF('/bird_skin.glb')
-  // const gltf = useGLTF('/bird-new.glb')
-  // const gltf = useGLTF('/bird.glb')
-  // const gltf = useGLTF('/toucan_bird.glb')
-
+  const gltf = useGLTF(url)
 
   // intialised data when gltf is ready
   const {
@@ -54,8 +43,8 @@ export function BoidsGltf({
     const birdGeo = (gltf.scene.children[ 0 ] as Mesh).geometry
     const birdMaterialMap = ((gltf.scene.children[ 0 ] as Mesh).material as MeshStandardMaterial).map
     const morphAttributes = birdGeo.morphAttributes.position
-    const tWidth = nextPowerOf2( birdGeo.getAttribute( 'position' ).count )
-    const tHeight = nextPowerOf2( durationAnimation )
+    const tWidth = blpo2( birdGeo.getAttribute( 'position' ).count )
+    const tHeight = blpo2( durationAnimation )
     const indicesPerBird = birdGeo.index?.count || 0
     const tData = new Float32Array( 4 * tWidth * tHeight );
 
@@ -243,6 +232,7 @@ export function BoidsGltf({
 
   }, [textureAnimation, birdMaterialMap])
 
+  // finally animation frame
   let last = performance.now()
   useFrame(f => {
     if(!computationRenderer || !positionVariable || !velocityVariable || !materialShader || pauseAnim) return
@@ -263,19 +253,8 @@ export function BoidsGltf({
     <mesh 
       rotation={rotation}
       material={material} 
-      geometry={geometry} />
+      geometry={geometry} 
+    />
   )
-
-}
-
-
-/**
- * math function to calculate next power of 2
- * @param n 
- * @returns 
- */
-function nextPowerOf2( n:number ) {
-
-  return Math.pow( 2, Math.ceil( Math.log( n ) / Math.log( 2 ) ) );
 
 }
