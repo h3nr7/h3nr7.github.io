@@ -4,10 +4,10 @@ import { Physics } from "@react-three/cannon"
 // import { Mesh } from "three";
 import { useMemo } from "react";
 import { Cube } from "./components/Cube";
-import { Ground } from "./components/Ground";
-import { AccumulativeShadows, Lightformer, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { BoundingBox } from "./components/BoundingBox";
 import { Vector3 } from "three";
+import { Ground } from "../../three/components/Ground";
 
 export function Beta() {
 
@@ -65,7 +65,9 @@ export function Beta() {
       <Physics gravity={gravity}>
         {arr.map((d, i) => <Cube key={i} devMode={devMode} position={[0, d, 0]} />)}
         <BoundingBox devMode={devMode} />
-        <Ground devMode={devMode}/>
+        <Ground 
+          hasPhysics={true} 
+          devMode={devMode} />
       </Physics>
       <OrbitControls target={[0, 0, 0]}/>
     </FiberWrapper>

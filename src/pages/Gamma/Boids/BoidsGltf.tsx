@@ -10,40 +10,48 @@ import { useGLTF } from "@react-three/drei";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { BIRDS, WIDTH } from ".";
 import { glsl } from "typed-glsl";
+import { vec3 } from 'gl-matrix'
 import { useFrame } from "@react-three/fiber";
 
 interface BoidsGltfProps {
   size?: number
+  pause?:boolean
+  rotation?: [number, number, number]
 }
 
 export function BoidsGltf({
-  size = 0.2
+  size = 0.2,
+  pause = false,
+  rotation = [0, Math.PI/2, 0]
 }: PropsWithChildren<BoidsGltfProps>) {
+
+  const [pauseAnim, setPauseAnim] = useState(pause)
+  useEffect(() => setPauseAnim(pause), [pause])
 
   let materialShader:Shader
   const { computationRenderer, positionVariable, velocityVariable } = useBoids()
   const geometry = new BufferGeometry()
   
   // const gltf = useGLTF('/Parrot.glb')
-  // const gltf = useGLTF('/Flamingo.glb')
+  const gltf = useGLTF('/Flamingo.glb')
   // const gltf = useGLTF('/bird_skin.glb')
-  const gltf = useGLTF('/bird-new.glb')
+  // const gltf = useGLTF('/bird-new.glb')
   // const gltf = useGLTF('/bird.glb')
   // const gltf = useGLTF('/toucan_bird.glb')
 
 
+  // intialised data when gltf is ready
   const {
     textureAnimation,
-    birdMaterialMap,
-    birdmaterial
+    birdMaterialMap
   } = useMemo(() => {
+
     if(!gltf) return {}
-    console.log(gltf.scene, ShaderLib['standard'])
+
     // initialise
     const animations = gltf.animations
     const durationAnimation = Math.round( animations[ 0 ].duration * 60 )
     const birdGeo = (gltf.scene.children[ 0 ] as Mesh).geometry
-    const birdmaterial = (gltf.scene.children[ 0 ] as Mesh).material as MeshStandardMaterial
     const birdMaterialMap = ((gltf.scene.children[ 0 ] as Mesh).material as MeshStandardMaterial).map
     const morphAttributes = birdGeo.morphAttributes.position
     const tWidth = nextPowerOf2( birdGeo.getAttribute( 'position' ).count )
@@ -51,6 +59,7 @@ export function BoidsGltf({
     const indicesPerBird = birdGeo.index?.count || 0
     const tData = new Float32Array( 4 * tWidth * tHeight );
 
+    // create cur and next animation morph in a Data Texture
     for ( let i = 0; i < tWidth; i ++ ) {
       for ( let j = 0; j < tHeight; j ++ ) {
 
@@ -61,45 +70,44 @@ export function BoidsGltf({
 
         if ( j < durationAnimation ) {
 
-          let d0, d1;
+          const cur = vec3.create()
+          cur[0] = morphAttributes[ curMorph ].array[i * 3]
+          cur[1] = morphAttributes[ curMorph ].array[i * 3 + 1]
+          cur[2] = morphAttributes[ curMorph ].array[i * 3 + 2]
 
-          d0 = morphAttributes[ curMorph ].array[ i * 3 ];
-          d1 = morphAttributes[ nextMorph ].array[ i * 3 ];
+          const next = vec3.create()
+          next[0] = morphAttributes[ nextMorph ].array[i * 3]
+          next[1] = morphAttributes[ nextMorph ].array[i * 3 + 1]
+          next[2] = morphAttributes[ nextMorph ].array[i * 3 + 2]
 
-          if ( d0 !== undefined && d1 !== undefined ) tData[ offset + i * 4 ] = lerp( d0, d1, lerpAmount );
+          const out = vec3.create()
+          vec3.lerp(out, cur, next, lerpAmount)
 
-          d0 = morphAttributes[ curMorph ].array[ i * 3 + 1 ];
-          d1 = morphAttributes[ nextMorph ].array[ i * 3 + 1 ];
-
-          if ( d0 !== undefined && d1 !== undefined ) tData[ offset + i * 4 + 1 ] = lerp( d0, d1, lerpAmount );
-
-          d0 = morphAttributes[ curMorph ].array[ i * 3 + 2 ];
-          d1 = morphAttributes[ nextMorph ].array[ i * 3 + 2 ];
-
-          if ( d0 !== undefined && d1 !== undefined ) tData[ offset + i * 4 + 2 ] = lerp( d0, d1, lerpAmount );
-
-          tData[ offset + i * 4 + 3 ] = 1;
+          tData[offset + i * 4] = out[0]
+          tData[offset + i * 4 + 1] = out[1]
+          tData[offset + i * 4 + 2] = out[2]
+          tData[offset + i * 4 + 3] = 1
 
         }
       }
     }
 
+    // Data texture for shaders
     const textureAnimation = new DataTexture( tData, tWidth, tHeight, RGBAFormat, FloatType );
     textureAnimation.needsUpdate = true;
 
-    const vertices = [], uv = [], /*color = [],*/ reference = [], seeds = [], indices = [];
+    const vertices = [], uv = [], reference = [], seeds = [], indices = [];
+
+    // generate all the vertices for all the birds
     const totalVertices = birdGeo.getAttribute( 'position' ).count * 3 * BIRDS;
-
-    console.log('counts: ', birdGeo.getAttribute( 'position' ).count, birdGeo.getAttribute( 'uv' ).count)
-
     for ( let i = 0; i < totalVertices; i ++ ) {
 
       const bIndex = i % ( birdGeo.getAttribute( 'position' ).count * 3 );
       vertices.push( birdGeo.getAttribute( 'position' ).array[ bIndex ] );
-      // color.push( birdGeo.getAttribute( 'color' ).array[ bIndex ] );
 
     }
 
+    // generate all the UV mapping data for all the birds
     const totalUv = birdGeo.getAttribute( 'uv' ).count * 2 * BIRDS;
     for ( let i = 0; i < totalUv; i ++ ) {
 
@@ -108,6 +116,7 @@ export function BoidsGltf({
 
     }
 
+    // randomly placed the birds and its references
     let r = Math.random();
     for ( let i = 0; i < birdGeo.getAttribute( 'position' ).count * BIRDS; i ++ ) {
 
@@ -122,6 +131,7 @@ export function BoidsGltf({
 
     }
 
+    // indices for allt each bird and its vertices
     const birdGeoArr = birdGeo.index?.array || []
     for ( let i = 0; i <birdGeoArr.length * BIRDS; i ++ ) {
 
@@ -130,32 +140,33 @@ export function BoidsGltf({
 
     }
 
+    // set attributes to buffer
     geometry.setAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
-    // geometry.setAttribute( 'birdColor', new BufferAttribute( new Float32Array( color ), 3 ) );
-    // geometry.setAttribute( 'color', new BufferAttribute( new Float32Array( color ), 3 ) );
     geometry.setAttribute( 'uv', new BufferAttribute( new Float32Array( uv ), 2 ) );
     geometry.setAttribute( 'reference', new BufferAttribute( new Float32Array( reference ), 4 ) );
     geometry.setAttribute( 'seeds', new BufferAttribute( new Float32Array( seeds ), 4 ) );
-
+    // set index and drawing range
     geometry.setIndex( indices );
     geometry.setDrawRange(0, indicesPerBird * BIRDS)
 
-    console.log('ta: ', textureAnimation)
-
-    return { textureAnimation, birdMaterialMap, birdmaterial }
+    // return created variables
+    return { textureAnimation, birdMaterialMap }
 
   }, [gltf])
 
+  // generate the material
   const material = useMemo(() => {
 
+    // generate mesh standard material
     const m = new MeshStandardMaterial( {
       vertexColors: false,
       flatShading: true,
-      // roughness: 1,
-      // metalness: 0,
+      roughness: 1,
+      metalness: 0,
       map: birdMaterialMap,
     })
 
+    // modify shanders on before compile
     m.onBeforeCompile = shader => {
 
       shader.uniforms.texturePosition = { value: null };
@@ -169,7 +180,6 @@ export function BoidsGltf({
       let insert = glsl`
         attribute vec4 reference;
         attribute vec4 seeds;
-        attribute vec3 birdColor;
         uniform sampler2D texturePosition;
         uniform sampler2D textureVelocity;
         uniform sampler2D textureAnimation;
@@ -179,19 +189,22 @@ export function BoidsGltf({
       shader.vertexShader = shader.vertexShader.replace( token, token + insert );
 
       token = '#include <begin_vertex>';
-
       insert = glsl`
-
+        // get position from boid position texture
         vec4 tmpPos = texture2D( texturePosition, reference.xy );
-
         vec3 pos = tmpPos.xyz;
+        // get velocity from boid velocity texture and normalise
         vec3 velocity = normalize(texture2D( textureVelocity, reference.xy ).xyz);
-        vec3 aniPos = texture2D( textureAnimation, vec2( reference.z, mod( time + ( seeds.x ) * ( ( 0.0004 + seeds.y / 10000.0) + normalize( velocity ) / 20000.0 ), reference.w ) ) ).xyz;
+        // get animation from data texture generated above in time.
+        vec3 aniPos = texture2D( textureAnimation, vec2( reference.z, mod( time + ( seeds.x ) * ( ( 0.0004 + seeds.y / 10000.0) + velocity / 20000.0 ), reference.w ) ) ).xyz;
+        
+        // adding all the positions together and multiply by the model matrix
         vec3 newPosition = position;
-
         newPosition = mat3( modelMatrix ) * ( newPosition + aniPos );
+        // applying the size and initial random position
         newPosition *= size + seeds.y * size * 0.2;
 
+        // applying the rotations through quanternion 
         velocity.z *= -1.;
         float xz = length( velocity.xz );
         float xyz = 1.;
@@ -211,13 +224,15 @@ export function BoidsGltf({
 
         vec3 transformed = vec3( newPosition );
       `;
-
       shader.vertexShader = shader.vertexShader.replace( token, insert );
 
 
-      // set material shader
+      // set material shader, accessibly by the animation useFrame 
+      // (cannot use react useState as it would break!)
       materialShader = shader
       
+      // initial position and velocity applied before useFrame 
+      // Not really required however good for debuggin when we stop the animation
       if(!computationRenderer || !positionVariable || !velocityVariable) return
       materialShader.uniforms[ 'texturePosition' ].value = computationRenderer.getCurrentRenderTarget( positionVariable ).texture;
       materialShader.uniforms[ 'textureVelocity' ].value = computationRenderer.getCurrentRenderTarget( velocityVariable ).texture;
@@ -230,7 +245,7 @@ export function BoidsGltf({
 
   let last = performance.now()
   useFrame(f => {
-    if(!computationRenderer || !positionVariable || !velocityVariable || !materialShader) return
+    if(!computationRenderer || !positionVariable || !velocityVariable || !materialShader || pauseAnim) return
     let now = f.clock.oldTime
     let delta = ( now - last ) / 1000;
 
@@ -246,7 +261,7 @@ export function BoidsGltf({
 
   return (
     <mesh 
-      rotation={[0, -Math.PI/2, 0]}
+      rotation={rotation}
       material={material} 
       geometry={geometry} />
   )
@@ -262,16 +277,5 @@ export function BoidsGltf({
 function nextPowerOf2( n:number ) {
 
   return Math.pow( 2, Math.ceil( Math.log( n ) / Math.log( 2 ) ) );
-
-}
-
-
-/**
- * 
- */
-function lerp( value1: number, value2: number, amount: number ) {
-
-  amount = Math.max( Math.min( amount, 1 ), 0 );
-  return value1 + ( value2 - value1 ) * amount;
 
 }

@@ -1,9 +1,9 @@
 import { Vector3 } from "three";
 import { FiberWrapper } from "../../three/components/FiberWrapper";
-import { Ground } from "./Ground";
 import { Boids, BoidsSimple } from "./Boids";
 import { BoidsGltf } from "./Boids/BoidsGltf";
 import { BoidsGltfAnim } from "./Boids/BoidsGltfAnim";
+import { Ground } from "../../three/components/Ground";
 
 
 export function Gamma() {
@@ -37,10 +37,10 @@ export function Gamma() {
       cohesionDistance={0.1}
       freedomFactor={0.1}>
       {/* <BoidsGltfAnim size={0.05}/> */}
-      <BoidsGltf size={5}/>
+      <BoidsGltf size={0.05}/>
       {/* <BoidsSimple /> */}
     </Boids>
-    <Ground/>
+    <Ground />
 
   </FiberWrapper>
   )

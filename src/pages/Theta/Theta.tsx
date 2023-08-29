@@ -1,8 +1,8 @@
 import { BufferAttribute, BufferGeometry, ClampToEdgeWrapping, CubeUVReflectionMapping, EquirectangularReflectionMapping, FrontSide, LinearSRGBColorSpace, Material, Mesh, MeshStandardMaterial, MirroredRepeatWrapping, RepeatWrapping, SRGBColorSpace, Texture, UVMapping, Vector3 } from "three";
 import { FiberWrapper } from "../../three/components/FiberWrapper";
-import { Ground } from "../Gamma/Ground";
 import { PropsWithChildren, Suspense, useMemo, useState } from "react";
 import { Clone, useGLTF } from "@react-three/drei";
+import { Ground } from "../../three/components/Ground";
 
 
 export function Theta() {
@@ -33,7 +33,7 @@ export function Theta() {
           <Suspense>
             <Model url={url}/>
           </Suspense>
-        <Ground/>
+        <Ground />
     </FiberWrapper>
 
   )
