@@ -6,6 +6,7 @@ import { Beta } from './pages/Beta/Beta';
 import { AppContainer } from './App.styles';
 import { Head } from './ui/Head';
 import { Home } from './pages/Home/Home';
+import { Theta } from './pages/Theta/Theta';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="alpha" element={<Alpha />} />
           <Route path="beta" element={<Beta />} />
           <Route path='gamma' element={<Gamma />} />
+          <Route path='theta' element={<Theta />} />
         </Routes>
         {/* <Foot /> */}
       </HashRouter>

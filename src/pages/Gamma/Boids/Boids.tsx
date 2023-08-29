@@ -87,6 +87,8 @@ export function Boids({
       console.error('BoidComputation Error:' + (e as Error)?.message)
     }
   
+    gpu.compute()
+
     return { computationRenderer: gpu, velocityVariable, positionVariable, velocityUniform, positionUniform }
   }, [])
 

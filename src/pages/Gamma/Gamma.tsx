@@ -36,8 +36,8 @@ export function Gamma() {
       alignmentDistance={0.1}
       cohesionDistance={0.1}
       freedomFactor={0.1}>
-      <BoidsGltfAnim size={0.05}/>
-      {/* <BoidsGltf size={0.05}/> */}
+      {/* <BoidsGltfAnim size={0.05}/> */}
+      <BoidsGltf size={5}/>
       {/* <BoidsSimple /> */}
     </Boids>
     <Ground/>
