@@ -1,30 +1,23 @@
 import { PropsWithChildren } from "react";
 import { Content } from "../../ui/Content";
 import { Card } from "../../ui/Card";
+import { LinkArr } from "../../App";
 
 interface HomeProps {
-
+  getLinks: () => LinkArr[]
 }
 
-export function Home({}:PropsWithChildren<HomeProps>) {
+export function Home({ getLinks }:PropsWithChildren<HomeProps>) {
+
+  const links = getLinks()
 
   return (
     <Content>
-      <Card name='Alpha'  link='alpha'>
-        hello
-      </Card>
-      <Card name='Beta' link='beta'>
-        hello
-      </Card>
-      <Card name='Theta' link='theta'>
-        hello
-      </Card>
-      <Card name='Gamma' link='gamma'>
-        hello
-      </Card>
-      <Card name='Zeta' link='zeta'>
-        hello
-      </Card>
+      {links.map(({ name, link }, i) => (
+        <Card key={i} name={name} link={link || '/'}>
+          hello
+        </Card>
+      ))}
     </Content>
   )
 }

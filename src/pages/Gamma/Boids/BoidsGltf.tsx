@@ -10,32 +10,30 @@ import { BIRDS, WIDTH } from ".";
 import { glsl } from "typed-glsl";
 import { vec3 } from 'gl-matrix'
 import { useFrame } from "@react-three/fiber";
-import { blpo2 } from "./helpers/math";
+import { nextPowerOf2 } from "./helpers/math";
 import { BoidsGltfProps } from "./Boids.interface";
 
 
 export function BoidsGltf({
   size = 0.2,
-  pause = false,
   rotation = [0, Math.PI/2, 0],
   url
 }: PropsWithChildren<BoidsGltfProps>) {
 
-  const [pauseAnim, setPauseAnim] = useState(pause)
-  useEffect(() => setPauseAnim(pause), [pause])
-
   let materialShader:Shader
   const { computationRenderer, positionVariable, velocityVariable } = useBoids()
-  const geometry = new BufferGeometry()
   const gltf = useGLTF(url)
 
   // intialised data when gltf is ready
   const {
     textureAnimation,
-    birdMaterialMap
+    birdMaterialMap,
+    geometry
   } = useMemo(() => {
 
     if(!gltf) return {}
+
+    const geometry = new BufferGeometry()
 
     // initialise
     const animations = gltf.animations
@@ -43,8 +41,8 @@ export function BoidsGltf({
     const birdGeo = (gltf.scene.children[ 0 ] as Mesh).geometry
     const birdMaterialMap = ((gltf.scene.children[ 0 ] as Mesh).material as MeshStandardMaterial).map
     const morphAttributes = birdGeo.morphAttributes.position
-    const tWidth = blpo2( birdGeo.getAttribute( 'position' ).count )
-    const tHeight = blpo2( durationAnimation )
+    const tWidth = nextPowerOf2( birdGeo.getAttribute( 'position' ).count )
+    const tHeight = nextPowerOf2( durationAnimation )
     const indicesPerBird = birdGeo.index?.count || 0
     const tData = new Float32Array( 4 * tWidth * tHeight );
 
@@ -139,7 +137,7 @@ export function BoidsGltf({
     geometry.setDrawRange(0, indicesPerBird * BIRDS)
 
     // return created variables
-    return { textureAnimation, birdMaterialMap }
+    return { textureAnimation, birdMaterialMap, geometry }
 
   }, [gltf])
 
@@ -235,7 +233,7 @@ export function BoidsGltf({
   // finally animation frame
   let last = performance.now()
   useFrame(f => {
-    if(!computationRenderer || !positionVariable || !velocityVariable || !materialShader || pauseAnim) return
+    if(!computationRenderer || !positionVariable || !velocityVariable || !materialShader) return
     let now = f.clock.oldTime
     let delta = ( now - last ) / 1000;
 

@@ -6,7 +6,9 @@ export interface BoidsProps {
   alignmentDistance?: number
   cohesionDistance?: number
   freedomFactor?: number
+  preyRadius?: number
   predator?: [number, number, number]
+  pause?:boolean
 }
 
 export interface BoidsGltfProps {

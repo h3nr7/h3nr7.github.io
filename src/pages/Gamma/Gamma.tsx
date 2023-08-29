@@ -3,22 +3,32 @@ import { FiberWrapper } from "../../three/components/FiberWrapper";
 import { Boids, BoidsSimple } from "./Boids";
 import { BoidsGltf } from "./Boids/BoidsGltf";
 import { Ground } from "../../three/components/Ground";
+import { folder, useControls } from "leva";
 
 
 export function Gamma() {
 
   const lookAt = new Vector3(0, 0, 0);
 
+  // test birds
+  const testLinks = [
+    '/Parrot.glb',
+    '/Flamingo.glb',
+    '/bird_skin.glb',
+    '/bird-new.glb',
+    '/bird.glb',
+    '/toucan_bird.glb'
+  ]
 
-    const testLinks = [
-      '/Parrot.glb',
-      '/Flamingo.glb',
-      '/bird_skin.glb',
-      '/bird-new.glb',
-      '/bird.glb',
-      '/toucan_bird.glb'
-    ]
-  
+  const { pauseBoids } = useControls({
+    animation: folder({
+      pauseBoids: {
+        title: 'pause boids',
+        value: false
+      }
+    })
+  })
+
 
   return (
     <FiberWrapper 
@@ -39,8 +49,8 @@ export function Gamma() {
         position={[0, 100, 0]} 
         decay={0.01}
         intensity={1}/>
-    {/* <Boids /> */}
     <Boids 
+      pause={pauseBoids}
       separationDistance={0.1}
       alignmentDistance={0.1}
       cohesionDistance={0.1}
@@ -48,10 +58,12 @@ export function Gamma() {
       <BoidsGltf size={0.05} url={testLinks[0]}/>
     </Boids>
     <Boids 
+      pause={pauseBoids}
       separationDistance={0.5}
       alignmentDistance={0.5}
       cohesionDistance={0.5}
-      freedomFactor={0.75}>
+      freedomFactor={0.75}
+      preyRadius={50.0}>
       <BoidsGltf size={0.05} url={testLinks[1]}/>
     </Boids>
     <Ground />

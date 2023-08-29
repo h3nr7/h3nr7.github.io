@@ -1,5 +1,5 @@
 import { GPUComputationRenderer } from "three/examples/jsm/misc/GPUComputationRenderer.js";
-import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
+import { PropsWithChildren, createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { BoidsProps, IBoidsCtx } from "./Boids.interface";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3, Texture, RepeatWrapping } from 'three'
@@ -30,9 +30,14 @@ export function Boids({
   alignmentDistance = 10.0,
   cohesionDistance = 10.0,
   freedomFactor = 0.75,
+  preyRadius = 50.0,
   predator = [0, 0, 0],
+  pause = false,
   children 
 }:PropsWithChildren<BoidsProps>) {
+
+  // const [pauseAnim, setPauseAnim] = useState(pause)
+
 
   const { gl } = useThree()
 
@@ -44,6 +49,7 @@ export function Boids({
     velocityUniform, 
     positionUniform 
   } = useMemo(() => {
+
     const gpu = new GPUComputationRenderer(WIDTH, WIDTH, gl)
 
     const dtVelocity = gpu.createTexture()
@@ -64,6 +70,7 @@ export function Boids({
     velocityUniform['time'] = { value: 1.0 }
     velocityUniform['delta'] = { value: 0.0 }
     velocityUniform['testing'] = { value: 1.0 }
+    velocityUniform['preyRadius'] = { value: preyRadius }
     velocityUniform['separationDistance'] = { value: separationDistance }
     velocityUniform['alignmentDistance'] = { value: alignmentDistance }
     velocityUniform['cohesionDistance'] = { value: cohesionDistance }
@@ -90,13 +97,13 @@ export function Boids({
     gpu.compute()
 
     return { computationRenderer: gpu, velocityVariable, positionVariable, velocityUniform, positionUniform }
-  }, [])
+  }, [gl])
 
 
   let last = performance.now()
   // use frame for rendered frames
   useFrame(f => {
-    if(!computationRenderer || !velocityUniform || !positionUniform) return
+    if(!computationRenderer || !velocityUniform || !positionUniform || pause) return
     let now = f.clock.oldTime
     let delta = ( now - last ) / 1000;
 
@@ -110,6 +117,7 @@ export function Boids({
 
     computationRenderer.compute()
   })
+
 
 
   return (

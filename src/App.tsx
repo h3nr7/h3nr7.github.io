@@ -8,17 +8,28 @@ import { Head } from './ui/Head';
 import { Home } from './pages/Home/Home';
 import { Theta } from './pages/Theta/Theta';
 
+export interface LinkArr {
+  name: string
+  link?: string
+  element: JSX.Element
+}
+
 function App() {
+
+  const links:LinkArr[] = [
+    { name:'Alpha', link: 'alpha', element: <Alpha />},
+    { name:'Beta', link: 'beta', element: <Beta />},
+    { name:'Gamma', link: 'gamma', element: <Gamma />},
+    { name:'Theta', link: 'theta', element: <Theta />},
+  ]
+
   return (
     <AppContainer>
       <HashRouter>
         <Head />
         <Routes>
-          <Route index element={<Home />} />
-          <Route path="alpha" element={<Alpha />} />
-          <Route path="beta" element={<Beta />} />
-          <Route path='gamma' element={<Gamma />} />
-          <Route path='theta' element={<Theta />} />
+          <Route index element={<Home getLinks={() => links}/>} />
+          {links.map(({ link, element }, i) => <Route key={i} index={!link} path={link} element={element}/>)}
         </Routes>
         {/* <Foot /> */}
       </HashRouter>

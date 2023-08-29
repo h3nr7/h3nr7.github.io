@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
+import { PropsWithChildren } from "react";
 
 
 const ALink = styled(Link)`
@@ -10,7 +11,7 @@ const ALink = styled(Link)`
     } */
 
     &:before {
-        content: " . ";
+        content: " / ";
     }
 
     &:first-child {
@@ -47,25 +48,26 @@ interface OutPaths {
 export function Head() {
 
     const location = useLocation();
-    const pathVars = location.pathname.split('/')
-    const reducePaths = pathVars.reduce((prev, next, index) => {
-        const len = prev.length
-        if(len === 0) {
-            prev.push({name: next, url: next})
-        } else {
-            prev.push({name: next, url: `${prev[index-1].url}/${next}`})
-        }
 
+    const pathVars = location.pathname.split('/')
+    
+    // there might be a better way of doing this...
+    const reducePaths = pathVars.reduce((prev, next, index) => {
+        const len = next.length
+        if(index === 0) {
+            prev.push({name: 'h3nr7.github.io', url: ''})
+        } else if(len > 0) {
+            console.log(index, prev, prev[index-1])
+            const prevUrl = prev.length && index > 0 ? prev[index-1].url : '' 
+            prev.push({name: next, url: `${prevUrl}/${next}`})
+        } 
+        
         return prev
     }, [] as OutPaths[])
-
-    // remove the first element
-    reducePaths.shift()
 
     return (
         <HeadContainer>
             <H5>
-                <ALink to='/'>h3nr7</ALink>
                 {reducePaths.map((o, i) => <ALink key={i} to={o.url}>{o.name}</ALink>)}
             </H5>
         </HeadContainer>

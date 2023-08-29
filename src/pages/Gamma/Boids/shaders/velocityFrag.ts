@@ -10,6 +10,7 @@ export const velocityFrag = glsl`
   uniform float alignmentDistance; // 40
   uniform float cohesionDistance; //
   uniform float freedomFactor;
+  uniform float preyRadius;
   uniform vec3 predator;
 
   const float width = resolution.x;
@@ -68,7 +69,6 @@ export const velocityFrag = glsl`
     dist = length( dir );
     distSquared = dist * dist;
 
-    float preyRadius = 50.0;
     float preyRadiusSq = preyRadius * preyRadius;
 
 
