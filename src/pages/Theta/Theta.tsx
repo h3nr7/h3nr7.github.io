@@ -1,57 +1,70 @@
 import { BufferAttribute, BufferGeometry, ClampToEdgeWrapping, CubeUVReflectionMapping, EquirectangularReflectionMapping, FrontSide, Group, LinearSRGBColorSpace, Material, Mesh, MeshStandardMaterial, MirroredRepeatWrapping, Object3D, RepeatWrapping, SRGBColorSpace, Texture, UVMapping, Vector3 } from "three";
 import { FiberWrapper } from "../../three/components/FiberWrapper";
-import { PropsWithChildren, Suspense, useMemo, useState } from "react";
+import { PropsWithChildren, Suspense, useMemo, useRef, useState } from "react";
 import { Clone, OrbitControls, Stage, useGLTF } from "@react-three/drei";
+import { DropGltf, useDropGltf } from "../../ui/DropGltf";
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 
 export function Theta() {
 
-  const lookAt = new Vector3(0, 0, 0);
-  const [url, setUrl] = useState('/bird_skin.glb');
+  return (
+    <DropGltf>
+      <Inner />
+    </DropGltf>
+  )
+}
 
+function Inner() {
+
+  const { gltf, reset } = useDropGltf()
 
   return (
     <FiberWrapper 
-    camera={{
-      fov: 8,
-      position: [200, 200, 350],
-      near: 10,
-      far: 3000
-    }}
-  >
-    <Stage>
-      {/* <hemisphereLight position={[0, 50, 0]} />
-      <directionalLight position={[-30, 57, 30]} />
-      <ambientLight intensity={1}/>
-      <spotLight 
-          castShadow
-          angle={Math.PI/2}
-          lookAt={() => lookAt}
-          position={[0, 100, 0]} 
-          decay={0.01}
-          intensity={1}/> */}
-        <Suspense>
-          <Model url={url} isDefault={false}/>
-        </Suspense>
-        <OrbitControls />
-    </Stage>
+      camera={{
+        fov: 8,
+        position: [200, 200, 350],
+        near: 10,
+        far: 3000
+      }}
+    >
+      <Stage>
+          <Suspense>
+            {gltf && <Model gltf={gltf} isDefault={false}/>}
+          </Suspense>
+          <OrbitControls />
+      </Stage>
 
-    </FiberWrapper>
-
+      </FiberWrapper>
   )
 }
 
-function Model({url, isDefault = false, scale = 0.2}: PropsWithChildren<{url: string, isDefault?: boolean, scale?:number}>) {
 
-  const { scene } = useGLTF(url)
+/**
+ * Model component, use default Clone or custom
+ * @param param0 
+ * @returns 
+ */
+function Model({
+  gltf, 
+  isDefault = false, 
+  scale = 0.2
+}: PropsWithChildren<{gltf: GLTF, isDefault?: boolean, scale?:number}>) {
 
-  return scene && (
-    isDefault ? <Clone object={scene} scale={scale}/> : <Custom object={scene} scale={scale}/>
+  return gltf.scene && (
+    isDefault ? <Clone object={gltf.scene} scale={scale}/> : <Custom object={gltf.scene} scale={scale}/>
   )
 }
 
+
+/**
+ * custom component
+ * @param param0 
+ * @returns 
+ */
 function Custom({ object, scale }:PropsWithChildren<{object: Group, scale?:number}>) {
 
+  // clone geometry and material from gltf scenes
   const {g, m} = useMemo(()=> {
 
     const mesh = getMeshWithMaterial(object)

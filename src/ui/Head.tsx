@@ -57,7 +57,6 @@ export function Head() {
         if(index === 0) {
             prev.push({name: 'h3nr7.github.io', url: ''})
         } else if(len > 0) {
-            console.log(index, prev, prev[index-1])
             const prevUrl = prev.length && index > 0 ? prev[index-1].url : '' 
             prev.push({name: next, url: `${prevUrl}/${next}`})
         } 

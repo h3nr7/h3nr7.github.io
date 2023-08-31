@@ -10,17 +10,37 @@ import { Theta } from './pages/Theta/Theta';
 
 export interface LinkArr {
   name: string
+  descriptions?: string
   link?: string
   element: JSX.Element
+  src?: string
 }
 
 function App() {
 
   const links:LinkArr[] = [
-    { name:'Alpha', link: 'alpha', element: <Alpha />},
-    { name:'Beta', link: 'beta', element: <Beta />},
-    { name:'Gamma', link: 'gamma', element: <Gamma />},
-    { name:'Theta', link: 'theta', element: <Theta />},
+    { 
+      name:'Miniworld Mallorca', 
+      descriptions: 'A journey to the mini world of Mallorca',
+      link: 'miniworld-mallorca', 
+      src: '/alpha.jpg', 
+      element: <Alpha />
+    },
+    { 
+      name:'Play with physics - Basic', 
+      link: 'physics-basic', 
+      element: <Beta />
+    },
+    { 
+      name:'R3F Boids', 
+      link: 'r3f-boids', 
+      element: <Gamma />
+    },
+    { 
+      name:'GLTF Viewer', 
+      link: 'gltf-viewer', 
+      element: <Theta />
+    },
   ]
 
   return (

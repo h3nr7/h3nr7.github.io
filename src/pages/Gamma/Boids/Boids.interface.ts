@@ -8,7 +8,8 @@ export interface BoidsProps {
   freedomFactor?: number
   preyRadius?: number
   predator?: [number, number, number]
-  pause?:boolean
+  pause?: boolean
+  countSquare?: number
 }
 
 export interface BoidsGltfProps {

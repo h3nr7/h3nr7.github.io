@@ -4,11 +4,13 @@ import { Boids, BoidsSimple } from "./Boids";
 import { BoidsGltf } from "./Boids/BoidsGltf";
 import { Ground } from "../../three/components/Ground";
 import { folder, useControls } from "leva";
+import { OrbitControls } from "@react-three/drei";
 
 
 export function Gamma() {
 
   const lookAt = new Vector3(0, 0, 0);
+
 
   // test birds
   const testLinks = [
@@ -50,6 +52,7 @@ export function Gamma() {
         decay={0.01}
         intensity={1}/>
     <Boids 
+      countSquare={8}
       pause={pauseBoids}
       separationDistance={0.1}
       alignmentDistance={0.1}
@@ -58,6 +61,7 @@ export function Gamma() {
       <BoidsGltf size={0.05} url={testLinks[0]}/>
     </Boids>
     <Boids 
+      countSquare={16}
       pause={pauseBoids}
       separationDistance={0.5}
       alignmentDistance={0.5}
@@ -66,8 +70,7 @@ export function Gamma() {
       preyRadius={50.0}>
       <BoidsGltf size={0.05} url={testLinks[1]}/>
     </Boids>
-    <Ground />
-
+    <OrbitControls target={[0, 0, 0]}/>
   </FiberWrapper>
   )
 }

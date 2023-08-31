@@ -33,7 +33,8 @@ export function Boids({
   preyRadius = 50.0,
   predator = [0, 0, 0],
   pause = false,
-  children 
+  children,
+  countSquare = WIDTH
 }:PropsWithChildren<BoidsProps>) {
 
   // const [pauseAnim, setPauseAnim] = useState(pause)
@@ -50,7 +51,7 @@ export function Boids({
     positionUniform 
   } = useMemo(() => {
 
-    const gpu = new GPUComputationRenderer(WIDTH, WIDTH, gl)
+    const gpu = new GPUComputationRenderer(countSquare, countSquare, gl)
 
     const dtVelocity = gpu.createTexture()
     const dtPosition = gpu.createTexture()

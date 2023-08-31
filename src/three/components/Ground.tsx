@@ -32,7 +32,6 @@ export function Ground({
         sectionColor={'blanchedalmond'}
         cellColor={'grey'}
         />
-        <OrbitControls target={[0, 0, 0]}/>
     </group>
   )
 }

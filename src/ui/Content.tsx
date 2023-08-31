@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import { PropsWithChildren } from 'react'
+import { device } from "../App.styles"
 
 interface ContentProps {}
 
@@ -21,4 +22,9 @@ const Container = styled.div`
     padding: 0 25px;
     flex-wrap: wrap; 
     overflow: auto;
+
+    @media ${device.sm} {
+      grid-template-columns: repeat(1, 1fr);
+
+    }
 `
