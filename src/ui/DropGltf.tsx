@@ -8,6 +8,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 
 export interface DropGltfProps {
+  onLoaded: (status:boolean) => void
 }
 
 export interface DropGltfStates {
@@ -21,7 +22,7 @@ const Ctx = createContext<DropGltfStates>({
 
 export const useDropGltf = () => useContext(Ctx)
 
-export function DropGltf({ children }:PropsWithChildren<DropGltfProps>) {
+export function DropGltf({ children, onLoaded }:PropsWithChildren<DropGltfProps>) {
 
   const [error, setError] = useState<Error>()
   const [gltf, setGltf] = useState<GLTF>()
@@ -33,7 +34,11 @@ export function DropGltf({ children }:PropsWithChildren<DropGltfProps>) {
   const dropHandler = useCallback(async (files: any[]) => {
     if(files && files.length > 0) {
       const url = URL.createObjectURL(files[0])
-      loader.load(url, gltf => setGltf(gltf))
+      loader.load(url, gltf => {
+        setGltf(gltf)
+        console.log(onLoaded, gltf)
+        if(onLoaded) onLoaded(!!gltf)
+      })
     } else {
       setError(new Error('No file is passed into drop zone'))
     }
@@ -49,7 +54,7 @@ export function DropGltf({ children }:PropsWithChildren<DropGltfProps>) {
             <Section>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <p>Drag 'n' drop some files here, or click to select files</p>
+                <p>Drop a GLTF file here, or click to select.</p>
               </div>
             </Section>
           )}
@@ -67,6 +72,22 @@ const Section = styled.section`
   justify-content: center;
   width: 100%;
   height: 100%;
+  
+  p {
+    font-size: 11px;
+    padding: 20px;
+    border: 1px dashed rgba(0, 0, 0, 0.25);
+    background: none;
+    color: black;
+    cursor: default;
+    transition: background-color 0.2s ease-in, color 0.15s ease-out; 
+    
+    &:hover {
+      color: white;
+      background: rgba(0, 0, 0, 1);
+      cursor: pointer;
+    }
+  }
 `
 
 const Cross = styled.div`

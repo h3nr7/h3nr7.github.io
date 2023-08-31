@@ -4,12 +4,28 @@ import { PropsWithChildren, Suspense, useMemo, useRef, useState } from "react";
 import { Clone, OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import { DropGltf, useDropGltf } from "../../ui/DropGltf";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { useControls } from "leva";
 
 
 export function Theta() {
 
+  const [{ pause, status, reset }, set] = useControls(() => ({
+    pause: {
+      value: false
+    },
+    status: {
+      label: 'GLTF loaded',
+      value: false,
+      disabled: true
+    },
+    reset: {
+      value: false,
+      onClick: () => {}
+    }
+  }))
+
   return (
-    <DropGltf>
+    <DropGltf onLoaded={status => set({ status })}>
       <Inner />
     </DropGltf>
   )
