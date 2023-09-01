@@ -1,15 +1,16 @@
 import { BufferAttribute, BufferGeometry, ClampToEdgeWrapping, CubeUVReflectionMapping, EquirectangularReflectionMapping, FrontSide, Group, LinearSRGBColorSpace, Material, Mesh, MeshStandardMaterial, MirroredRepeatWrapping, Object3D, RepeatWrapping, SRGBColorSpace, Texture, UVMapping, Vector3 } from "three";
 import { FiberWrapper } from "../../three/components/FiberWrapper";
-import { PropsWithChildren, Suspense, useMemo, useRef, useState } from "react";
-import { Clone, OrbitControls, Stage, useGLTF } from "@react-three/drei";
+import { PropsWithChildren, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Center, Clone, OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import { DropGltf, useDropGltf } from "../../ui/DropGltf";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { useControls } from "leva";
+import { button, useControls } from "leva";
+import { findObjWithGeoMat } from "../../three/helpers/gltf";
 
 
 export function Theta() {
 
-  const [{ pause, status, reset }, set] = useControls(() => ({
+  const [{ pause, status, isReset, custom }, set] = useControls(() => ({
     pause: {
       value: false
     },
@@ -18,22 +19,40 @@ export function Theta() {
       value: false,
       disabled: true
     },
-    reset: {
-      value: false,
-      onClick: () => {}
+    isReset: {
+      value: true,
+      render: () => false
+    },
+    reset: button(
+      (get) => { if(!get('reset')) {
+        // a bit hacky but fuck it
+        set({isReset: true }) }
+        set({status: false})
+      }
+    ),
+    custom: {
+      label: 'Use baked texture',
+      value: false
     }
   }))
 
   return (
-    <DropGltf onLoaded={status => set({ status })}>
-      <Inner />
+    <DropGltf onLoaded={status => {
+      set({ status })
+      set({ isReset: false })
+    }}>
+      <Inner reset={!!isReset} custom={custom} />
     </DropGltf>
   )
 }
 
-function Inner() {
+function Inner({ reset, custom }: PropsWithChildren<{ reset: boolean, custom: boolean }>) {
 
-  const { gltf, reset } = useDropGltf()
+  const { gltf, validGeoMat, reset: gltfReset } = useDropGltf()
+  useEffect(() => { if(reset) gltfReset() }, [reset])
+  // log gltf in console
+  useEffect(() => console.log('Loaded GLTF and found GeoMat: ', gltf, validGeoMat), [gltf])
+  
 
   return (
     <FiberWrapper 
@@ -46,7 +65,9 @@ function Inner() {
     >
       <Stage>
           <Suspense>
-            {gltf && <Model gltf={gltf} isDefault={false}/>}
+            <Center>
+              {gltf && <Model gltf={gltf} isDefault={!custom || !validGeoMat}/>}
+            </Center>
           </Suspense>
           <OrbitControls />
       </Stage>
@@ -68,7 +89,7 @@ function Model({
 }: PropsWithChildren<{gltf: GLTF, isDefault?: boolean, scale?:number}>) {
 
   return gltf.scene && (
-    isDefault ? <Clone object={gltf.scene} scale={scale}/> : <Custom object={gltf.scene} scale={scale}/>
+    isDefault ? <Clone object={gltf.scene} scale={scale}/> : <Custom object={gltf.scene.children} scale={scale}/>
   )
 }
 
@@ -78,12 +99,12 @@ function Model({
  * @param param0 
  * @returns 
  */
-function Custom({ object, scale }:PropsWithChildren<{object: Group, scale?:number}>) {
+function Custom({ object, scale }:PropsWithChildren<{object: Object3D[], scale?:number}>) {
 
   // clone geometry and material from gltf scenes
   const {g, m} = useMemo(()=> {
 
-    const mesh = getMeshWithMaterial(object)
+    const mesh = findObjWithGeoMat(object)
     const birdGeo = mesh.geometry, indices = [];
 
     const birdMat = mesh.material

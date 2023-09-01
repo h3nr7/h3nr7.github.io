@@ -4,6 +4,7 @@ import { styled } from 'styled-components'
 import { Group, Scene } from 'three'
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import { GeoMatObj, findObjWithGeoMat } from '../three/helpers/gltf'
 
 
 
@@ -13,7 +14,9 @@ export interface DropGltfProps {
 
 export interface DropGltfStates {
   gltf?: GLTF
+  validGeoMat?: GeoMatObj
   reset: () => void
+  hasTexture?: boolean
 }
 
 const Ctx = createContext<DropGltfStates>({
@@ -26,6 +29,7 @@ export function DropGltf({ children, onLoaded }:PropsWithChildren<DropGltfProps>
 
   const [error, setError] = useState<Error>()
   const [gltf, setGltf] = useState<GLTF>()
+  const [validGeoMat, setValidGeoMat] = useState<GeoMatObj>()
   const loader = new GLTFLoader()
   const dracoLoader = new DRACOLoader()
   dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/' )
@@ -36,7 +40,12 @@ export function DropGltf({ children, onLoaded }:PropsWithChildren<DropGltfProps>
       const url = URL.createObjectURL(files[0])
       loader.load(url, gltf => {
         setGltf(gltf)
-        console.log(onLoaded, gltf)
+        try {
+          const one = findObjWithGeoMat(gltf.scene.children)
+          setValidGeoMat(one)
+        } catch(e) {
+          setValidGeoMat(undefined)
+        }
         if(onLoaded) onLoaded(!!gltf)
       })
     } else {
@@ -44,10 +53,13 @@ export function DropGltf({ children, onLoaded }:PropsWithChildren<DropGltfProps>
     }
   }, [])
 
-  const reset = () => setGltf(undefined)
+  const reset = () => {
+    setGltf(undefined)
+    setValidGeoMat(undefined)
+  }
 
   return (
-    <Ctx.Provider value={{ gltf, reset }}>
+    <Ctx.Provider value={{ gltf, validGeoMat, reset }}>
       {gltf ? children : (
         <Dropzone onDrop={dropHandler}>
           {({getRootProps, getInputProps}) => (
