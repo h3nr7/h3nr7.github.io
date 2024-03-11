@@ -17,6 +17,7 @@ interface Sea {
   waveFactor?: number
   waveAmplitude?: number
   waveColorOffset?: number
+  scale?: [number, number, number]
 }
 
 export function Sea({
@@ -29,7 +30,8 @@ export function Sea({
   crestColor = '#81d4de',
   waveColorOffset = 0,
   waveFactor = 1,
-  waveAmplitude = 1
+  waveAmplitude = 1,
+  scale = [1, 1, 1]
 }:Sea) {
 
   const [bgTex, bgProgress, bgErr] = useTextureLoader('/bg.png')
@@ -84,7 +86,7 @@ export function Sea({
   ])
 
   return (
-    <mesh material={material}>
+    <mesh material={material} scale={scale}>
       <sphereGeometry args={[5, 512, 512]}/>
     </mesh>
   )

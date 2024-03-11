@@ -7,6 +7,7 @@ import { AppContainer } from './App.styles';
 import { Head } from './ui/Head';
 import { Home } from './pages/Home/Home';
 import { Theta } from './pages/Theta/Theta';
+import { NaviStoreCtx } from './stores/NaviStore';
 
 export interface LinkArr {
   name: string
@@ -44,16 +45,24 @@ function App() {
   ]
 
   return (
-    <AppContainer>
-      <HashRouter>
-        <Head />
-        <Routes>
-          <Route index element={<Home getLinks={() => links}/>} />
-          {links.map(({ link, element }, i) => <Route key={i} index={!link} path={link} element={element}/>)}
-        </Routes>
-        {/* <Foot /> */}
-      </HashRouter>
-    </AppContainer>
+    <HashRouter>
+      <Routes>
+        <Route index element={<AppContainer><Home getLinks={() => links}/></AppContainer>} />
+        {links.map(({ link, element }, i) => 
+          <Route 
+            key={i} 
+            index={!link} 
+            path={link} 
+            element={
+              <AppContainer>
+                {element}
+              </AppContainer>
+            }
+          />
+        )}
+      </Routes>
+      <Head />
+    </HashRouter>
   );
 }
 

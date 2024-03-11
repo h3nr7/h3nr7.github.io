@@ -15,6 +15,7 @@
     "@react-three/cannon": "^6.6.0",
     "@react-three/drei": "^9.80.4",
     "@react-three/fiber": "^8.13.7",
+    "contentful": "^10.8.0",
     "gl-matrix": "^3.4.3",
     "leva": "^0.9.35",
     "potree-loader": "^1.10.4",
@@ -40,6 +41,7 @@
     "sass": "^1.66.1",
     "typed-glsl": "^0.11.1",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "vite-plugin-svgr": "^4.2.0"
   }
 }

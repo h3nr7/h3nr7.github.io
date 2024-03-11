@@ -4,7 +4,8 @@ import { Boids, BoidsSimple } from "./Boids";
 import { BoidsGltf } from "./Boids/BoidsGltf";
 import { Ground } from "../../three/components/Ground";
 import { folder, useControls } from "leva";
-import { OrbitControls } from "@react-three/drei";
+import { Cloud, OrbitControls, Sky } from "@react-three/drei";
+import { Sea } from "../Alpha/Sea/Sea";
 
 
 export function Gamma() {
@@ -42,8 +43,15 @@ export function Gamma() {
     }}
   >
     <hemisphereLight position={[0, 50, 0]}/>
-    <directionalLight position={[-30, 57, 30]} />
+    <directionalLight 
+      intensity={2}
+      position={[-30, 57, 30]}
+      castShadow={true} />
+      color={'#ffcc33'}
+      position={[100, -30, -10]}
     <ambientLight intensity={1}/>
+    <Sky 
+      inclination={0.6}/>
     <spotLight 
         castShadow
         angle={Math.PI/2}
