@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route, HashRouter } from 'react-router-dom';
+import { Routes, Route, HashRouter, redirect, Navigate } from 'react-router-dom';
 import { Gamma } from './pages/Gamma/Gamma';
 import { Alpha } from './pages/Alpha/Alpha';
 import { Beta } from './pages/Beta/Beta';
@@ -7,7 +7,6 @@ import { AppContainer } from './App.styles';
 import { Head } from './ui/Head';
 import { Home } from './pages/Home/Home';
 import { Theta } from './pages/Theta/Theta';
-import { NaviStoreCtx } from './stores/NaviStore';
 
 export interface LinkArr {
   name: string
@@ -47,7 +46,6 @@ function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route index element={<AppContainer><Home getLinks={() => links}/></AppContainer>} />
         {links.map(({ link, element }, i) => 
           <Route 
             key={i} 
@@ -60,6 +58,8 @@ function App() {
             }
           />
         )}
+        <Route 
+          path="*" element={<Navigate to={links[0].link || ''} />} />
       </Routes>
       <Head />
     </HashRouter>
