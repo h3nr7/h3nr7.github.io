@@ -7,6 +7,7 @@ import { AppContainer } from './App.styles';
 import { Head } from './ui/Head';
 import { Home } from './pages/Home/Home';
 import { Theta } from './pages/Theta/Theta';
+import { Ribbons } from './pages/Ribbons/Ribbons';
 
 export interface LinkArr {
   name: string
@@ -41,6 +42,11 @@ function App() {
       link: 'gltf-viewer', 
       element: <Theta />
     },
+    {
+      name: 'Ribbons',
+      link: 'ribbons',
+      element: <Ribbons />
+    }
   ]
 
   return (
